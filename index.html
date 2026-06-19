@@ -1,1 +1,820 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cena Verano 2026</title>
+    <!-- Usamos Tailwind CSS para darle un estilo moderno y adaptado a pantallas grandes -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #0f172a; /* Slate 900 oscuro */
+            /* CAMBIO: Imagen de fondo con filtro mucho menos oscuro (40%) para que la foto se vea bien */
+            background-image: linear-gradient(rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.4)), url('https://raw.githubusercontent.com/AVS-PROJECTS33/Cena_Verano_2026/main/FOTOCENAVERANO.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            overflow: hidden; /* Evitar scroll en la TV */
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
 
+        /* Utilidad para ocultar elementos fluidamente */
+        .hidden-view {
+            display: none !important;
+        }
+
+        /* Estilos del Bingo */
+        .bingo-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 0.5rem;
+            height: 100%;
+        }
+
+        .bingo-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #000000;
+            color: #ffffff;
+            border: 2px solid #334155;
+            border-radius: 0.5rem;
+            font-size: 2vw; /* Escala con el ancho de la pantalla */
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        /* NUMEROS MARCADOS: Fondo Verde, TEXTO NEGRO */
+        .bingo-number.drawn {
+            background-color: #22c55e; 
+            border-color: #16a34a;
+            color: #000000; /* Texto en negro para mejor contraste */
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
+        }
+
+        .bingo-number.last-drawn {
+            background-color: #10b981;
+            border-color: #059669;
+            color: #000000; /* Texto en negro */
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.8);
+            animation: pulse-green 1.5s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Estilos de la Ruleta */
+        #roulette-container {
+            position: relative;
+            width: 80vh;
+            height: 80vh;
+            margin: 0 auto;
+        }
+
+        canvas {
+            border-radius: 50%;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            background-color: #1e293b;
+        }
+
+        .play-button-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, #ef4444 0%, #b91c1c 100%);
+            border: 4px solid white;
+            border-radius: 50%;
+            color: white;
+            font-weight: 900;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4), inset 0 5px 10px rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s;
+            z-index: 10;
+        }
+
+        .play-button-center:active {
+            transform: translate(-50%, -50%) scale(0.95);
+        }
+
+        .play-button-center:disabled {
+            background: #64748b;
+            cursor: not-allowed;
+            transform: translate(-50%, -50%);
+        }
+
+        .pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0; 
+            height: 0; 
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid #facc15; /* Flecha amarilla */
+            z-index: 20;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569; 
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen">
+
+    <!-- Header / Navbar -->
+    <header class="bg-gray-900/50 backdrop-blur-md border-b border-gray-800/50 p-4 flex justify-between items-center shadow-lg h-[10vh]">
+        <div class="text-2xl font-black tracking-wider flex items-center gap-3 text-yellow-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            CENA VERANO 2026
+        </div>
+        <div class="flex gap-4">
+            <button onclick="switchView('bingo')" id="tab-bingo" class="px-6 py-2 rounded-full font-bold transition-colors bg-blue-600 text-white hover:bg-blue-500">
+                Jugar al Bingo
+            </button>
+            <button onclick="switchView('sorteo')" id="tab-sorteo" class="px-6 py-2 rounded-full font-bold transition-colors bg-gray-700 text-gray-300 hover:bg-gray-600">
+                Sorteo / Ruleta
+            </button>
+        </div>
+    </header>
+
+    <!-- CONTENEDOR BINGO -->
+    <main id="view-bingo" class="flex flex-1 h-[90vh]">
+        <!-- Panel Izquierdo: Controles y Número Actual (Ajustado para que el botón no desaparezca) -->
+        <div class="w-1/3 bg-gray-800/40 backdrop-blur-md p-6 flex flex-col items-center justify-between border-r border-gray-700/50 h-full overflow-y-auto">
+            
+            <div class="text-center w-full mb-4">
+                <h2 class="text-3xl font-bold text-gray-400 mb-4 uppercase tracking-widest">Número Actual</h2>
+                <div class="bg-black/90 border-4 border-yellow-500 rounded-3xl w-full aspect-[4/3] max-h-60 flex items-center justify-center shadow-2xl relative mx-auto overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent"></div>
+                    <span id="current-number-display" class="text-9xl font-black text-white" style="font-size: 8rem;">--</span>
+                </div>
+            </div>
+
+            <div class="w-full flex flex-col gap-4 flex-1 justify-end">
+                <!-- Botón Principal Play/Pause -->
+                <button id="toggleBingoBtn" onclick="toggleBingoAuto()" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-5 px-4 rounded-2xl text-2xl shadow-lg transition-transform transform active:scale-95 flex justify-center items-center gap-3">
+                    <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    <svg id="pauseIcon" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                    <span id="toggleBingoText">INICIAR BINGO</span>
+                </button>
+
+                <!-- Panel de info extra -->
+                <div class="flex justify-between text-gray-300 text-xl px-2 my-1 font-semibold">
+                    <span>Extraídos: <span id="drawn-count" class="text-white">0</span>/90</span>
+                    <span id="status-text" class="text-yellow-400">Esperando...</span>
+                </div>
+
+                <!-- Botón de Reinicio Seguro (Doble Confirmación) -->
+                <button id="resetBingoBtn" onclick="requestBingoReset()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-4 rounded-xl text-xl shadow-lg transition-colors flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                    <span id="resetBingoText">Reiniciar Partida</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Panel Derecho: Tablero de 90 números -->
+        <div class="w-2/3 bg-gray-900/40 backdrop-blur-md p-6 h-full">
+            <div id="bingo-board" class="bingo-grid">
+                <!-- Se rellena con JS -->
+            </div>
+        </div>
+    </main>
+
+    <!-- CONTENEDOR SORTEO (RULETA) -->
+    <main id="view-sorteo" class="flex flex-1 h-[90vh] hidden-view bg-transparent">
+        
+        <!-- Panel Lateral para Nombres y Listas -->
+        <div class="w-1/4 bg-gray-800/40 backdrop-blur-md border-r border-gray-700/50 p-6 flex flex-col relative h-full">
+            
+            <!-- VISTA: GESTOR DE LISTAS -->
+            <div id="view-list-manager" class="flex-1 flex flex-col h-full min-h-0">
+                <h2 class="text-2xl font-bold mb-4 text-yellow-400">Mis Listas</h2>
+                
+                <!-- Contenedor de listas guardadas -->
+                <div id="lists-container" class="flex-1 overflow-y-auto space-y-2 mb-4 pr-2">
+                    <!-- Se llena con JS -->
+                </div>
+
+                <button onclick="showEditList()" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-4 px-4 rounded-xl mt-auto transition-colors flex items-center justify-center gap-2 shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                    Crear Nueva Lista
+                </button>
+            </div>
+
+            <!-- VISTA: EDITAR/NUEVA LISTA -->
+            <div id="view-list-editor" class="flex-1 flex flex-col h-full hidden-view">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 id="editor-title" class="text-2xl font-bold text-yellow-400">Nueva Lista</h2>
+                    <button onclick="deleteCurrentList()" id="btn-delete-list" class="text-red-500 hover:text-red-400 hidden p-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    </button>
+                </div>
+                
+                <input type="text" id="list-name-input" class="w-full bg-gray-900 text-white p-3 rounded-xl border border-gray-600 focus:border-yellow-500 mb-3" placeholder="Ej: Departamento IT">
+                
+                <p class="text-xs text-gray-400 mb-2">Escribe un nombre por línea o separados por comas.</p>
+                <textarea id="names-input" class="w-full flex-1 bg-gray-900 text-white p-4 rounded-xl border border-gray-600 focus:border-yellow-500 focus:outline-none resize-none text-lg mb-4" placeholder="Juan Pérez&#10;María López&#10;Carlos García..."></textarea>
+                
+                <p id="list-error-msg" class="text-red-400 text-sm mb-2 hidden-view">Debes añadir al menos 1 nombre.</p>
+
+                <div class="flex gap-2 mt-auto">
+                    <button onclick="hideEditList()" class="w-1/3 bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 rounded-xl transition-colors">Volver</button>
+                    <button onclick="saveList()" class="w-2/3 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-colors shadow-lg">Guardar y Usar</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Área de la Ruleta -->
+        <div class="w-3/4 flex flex-col items-center justify-center relative p-8">
+            <h3 id="current-list-title" class="absolute top-8 left-8 text-3xl font-black text-gray-700 tracking-wider"></h3>
+            
+            <div id="roulette-container">
+                <div class="pointer"></div>
+                <canvas id="roulette-canvas" width="800" height="800" class="w-full h-full"></canvas>
+                <button id="spin-btn" onclick="spinRoulette()" class="play-button-center">
+                    PLAY
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Ganador Sorteo -->
+    <div id="winner-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 hidden-view opacity-0 transition-opacity duration-500">
+        <div class="bg-gray-800/80 backdrop-blur-md border-4 border-yellow-500 rounded-3xl p-12 text-center shadow-2xl max-w-2xl transform scale-90 transition-transform duration-500" id="winner-modal-content">
+            <h2 class="text-4xl text-gray-300 font-bold mb-4">¡TENEMOS UN GANADOR/A!</h2>
+            <div id="winner-name" class="text-7xl font-black text-yellow-400 mb-8 py-6 uppercase break-words">Nombre</div>
+            <button onclick="closeWinnerModal()" class="bg-white text-black font-bold py-3 px-8 rounded-full text-xl hover:bg-gray-200 transition-colors">
+                Continuar
+            </button>
+        </div>
+    </div>
+
+
+    <script>
+        // ==========================================
+        // SISTEMA DE NAVEGACIÓN
+        // ==========================================
+        function switchView(viewName) {
+            const viewBingo = document.getElementById('view-bingo');
+            const viewSorteo = document.getElementById('view-sorteo');
+            const tabBingo = document.getElementById('tab-bingo');
+            const tabSorteo = document.getElementById('tab-sorteo');
+
+            if (viewName === 'bingo') {
+                viewBingo.classList.remove('hidden-view');
+                viewSorteo.classList.add('hidden-view');
+                
+                tabBingo.classList.replace('bg-gray-700', 'bg-blue-600');
+                tabBingo.classList.replace('text-gray-300', 'text-white');
+                tabSorteo.classList.replace('bg-blue-600', 'bg-gray-700');
+                tabSorteo.classList.replace('text-white', 'text-gray-300');
+            } else {
+                viewSorteo.classList.remove('hidden-view');
+                viewBingo.classList.add('hidden-view');
+                
+                tabSorteo.classList.replace('bg-gray-700', 'bg-blue-600');
+                tabSorteo.classList.replace('text-gray-300', 'text-white');
+                tabBingo.classList.replace('bg-blue-600', 'bg-gray-700');
+                tabBingo.classList.replace('text-white', 'text-gray-300');
+                
+                drawRoulette();
+            }
+        }
+
+        // ==========================================
+        // LÓGICA DEL BINGO
+        // ==========================================
+        const totalNumbers = 90;
+        let availableNumbers = [];
+        let drawnNumbers = [];
+        let bingoInterval = null;
+        let isPlaying = false;
+        
+        let resetConfirmStage = 0;
+        let resetTimeout = null;
+
+        function initBingoBoard() {
+            const board = document.getElementById('bingo-board');
+            board.innerHTML = '';
+            for (let i = 1; i <= totalNumbers; i++) {
+                const numDiv = document.createElement('div');
+                numDiv.className = 'bingo-number';
+                numDiv.id = `num-${i}`;
+                numDiv.innerText = i;
+                board.appendChild(numDiv);
+            }
+            resetBingoData();
+        }
+
+        function resetBingoData() {
+            availableNumbers = Array.from({length: totalNumbers}, (_, i) => i + 1);
+            drawnNumbers = [];
+            document.getElementById('current-number-display').innerText = '--';
+            document.getElementById('drawn-count').innerText = '0';
+            
+            for (let i = 1; i <= totalNumbers; i++) {
+                const el = document.getElementById(`num-${i}`);
+                if(el) {
+                    el.classList.remove('drawn', 'last-drawn');
+                }
+            }
+            
+            stopBingoAuto();
+        }
+
+        function drawSingleNumber() {
+            if (availableNumbers.length === 0) {
+                stopBingoAuto();
+                document.getElementById('status-text').innerText = "¡BINGO COMPLETADO!";
+                return;
+            }
+
+            const randomIndex = Math.floor(Math.random() * availableNumbers.length);
+            const number = availableNumbers.splice(randomIndex, 1)[0];
+            drawnNumbers.push(number);
+            
+            if (drawnNumbers.length > 1) {
+                const prevNumber = drawnNumbers[drawnNumbers.length - 2];
+                document.getElementById(`num-${prevNumber}`).classList.remove('last-drawn');
+            }
+
+            document.getElementById('current-number-display').innerText = number;
+            document.getElementById('drawn-count').innerText = drawnNumbers.length;
+            
+            const boardCell = document.getElementById(`num-${number}`);
+            boardCell.classList.add('drawn', 'last-drawn');
+        }
+
+        function toggleBingoAuto() {
+            if (isPlaying) {
+                stopBingoAuto();
+            } else {
+                startBingoAuto();
+            }
+        }
+
+        function startBingoAuto() {
+            if (availableNumbers.length === 0) return;
+            
+            isPlaying = true;
+            document.getElementById('status-text').innerText = "Sorteando...";
+            
+            document.getElementById('toggleBingoBtn').classList.replace('bg-green-600', 'bg-yellow-600');
+            document.getElementById('toggleBingoBtn').classList.replace('hover:bg-green-500', 'hover:bg-yellow-500');
+            document.getElementById('playIcon').classList.add('hidden');
+            document.getElementById('pauseIcon').classList.remove('hidden');
+            document.getElementById('toggleBingoText').innerText = "PAUSAR (LÍNEA/BINGO)";
+
+            drawSingleNumber();
+            // INTERVALO REDUCIDO A 5 SEGUNDOS (5000ms)
+            bingoInterval = setInterval(drawSingleNumber, 5000);
+        }
+
+        function stopBingoAuto() {
+            isPlaying = false;
+            clearInterval(bingoInterval);
+            document.getElementById('status-text').innerText = "Pausado";
+            
+            document.getElementById('toggleBingoBtn').classList.replace('bg-yellow-600', 'bg-green-600');
+            document.getElementById('toggleBingoBtn').classList.replace('hover:bg-yellow-500', 'hover:bg-green-500');
+            document.getElementById('pauseIcon').classList.add('hidden');
+            document.getElementById('playIcon').classList.remove('hidden');
+            
+            if(availableNumbers.length === 0) {
+                document.getElementById('toggleBingoText').innerText = "PARTIDA FINALIZADA";
+                document.getElementById('toggleBingoBtn').disabled = true;
+                document.getElementById('toggleBingoBtn').classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                document.getElementById('toggleBingoText').innerText = "CONTINUAR JUEGO";
+            }
+        }
+
+        function requestBingoReset() {
+            const btn = document.getElementById('resetBingoBtn');
+            const text = document.getElementById('resetBingoText');
+
+            if (resetConfirmStage === 0) {
+                resetConfirmStage = 1;
+                text.innerText = "¿Seguro? Click para Confirmar";
+                btn.classList.replace('bg-red-600', 'bg-orange-500');
+                btn.classList.replace('hover:bg-red-700', 'hover:bg-orange-600');
+                
+                resetTimeout = setTimeout(() => {
+                    cancelBingoReset();
+                }, 3000);
+            } else if (resetConfirmStage === 1) {
+                clearTimeout(resetTimeout);
+                resetBingoData();
+                cancelBingoReset(); 
+                
+                document.getElementById('toggleBingoBtn').disabled = false;
+                document.getElementById('toggleBingoBtn').classList.remove('opacity-50', 'cursor-not-allowed');
+                document.getElementById('toggleBingoText').innerText = "INICIAR BINGO";
+            }
+        }
+
+        function cancelBingoReset() {
+            const btn = document.getElementById('resetBingoBtn');
+            const text = document.getElementById('resetBingoText');
+            resetConfirmStage = 0;
+            text.innerText = "Reiniciar Partida";
+            btn.classList.replace('bg-orange-500', 'bg-red-600');
+            btn.classList.replace('hover:bg-orange-600', 'hover:bg-red-700');
+        }
+
+
+        // ==========================================
+        // LÓGICA DEL SORTEO Y GESTIÓN DE LISTAS
+        // ==========================================
+        let savedLists = [];
+        let currentEditingId = null;
+        let currentActiveListId = null;
+
+        const canvas = document.getElementById('roulette-canvas');
+        const ctx = canvas.getContext('2d');
+        let namesList = ["Crea", "una", "Lista"];
+        
+        const colors = [
+            '#ef4444', '#f97316', '#f59e0b', '#84cc16', 
+            '#22c55e', '#14b8a6', '#0ea5e9', '#3b82f6', 
+            '#6366f1', '#8b5cf6', '#d946ef', '#f43f5e'
+        ];
+
+        let currentAngle = 0;
+        let spinVelocity = 0;
+        let isSpinning = false;
+        let animationFrame;
+
+        // --- SISTEMA DE LISTAS ---
+        function initLists() {
+            const stored = localStorage.getItem('rouletteLists_cena2026');
+            if (stored) {
+                savedLists = JSON.parse(stored);
+            } else {
+                // Lista de ejemplo por defecto
+                savedLists = [{
+                    id: Date.now(), 
+                    name: 'Plantilla de Ejemplo', 
+                    names: ['Laura', 'Pedro', 'Marta', 'Carlos', 'Ana', 'David']
+                }];
+                saveListsToStorage();
+            }
+            
+            renderLists();
+            
+            if(savedLists.length > 0) {
+                selectList(savedLists[0].id);
+            } else {
+                drawRoulette();
+            }
+        }
+
+        function saveListsToStorage() {
+            localStorage.setItem('rouletteLists_cena2026', JSON.stringify(savedLists));
+        }
+
+        function renderLists() {
+            const container = document.getElementById('lists-container');
+            container.innerHTML = '';
+            
+            if (savedLists.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-sm text-center mt-4">No hay listas guardadas.</p>';
+                return;
+            }
+
+            savedLists.forEach(list => {
+                const div = document.createElement('div');
+                // Estilo base
+                let bgClass = list.id === currentActiveListId ? 'bg-blue-900 border-blue-500' : 'bg-gray-700 border-transparent';
+                let hoverClass = list.id === currentActiveListId ? 'hover:bg-blue-800' : 'hover:bg-gray-600';
+                
+                div.className = `${bgClass} ${hoverClass} border p-4 rounded-xl cursor-pointer flex justify-between items-center group transition-colors`;
+                div.onclick = () => selectList(list.id);
+                
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'flex flex-col overflow-hidden pr-2';
+                
+                const title = document.createElement('span');
+                title.className = `font-bold ${list.id === currentActiveListId ? 'text-yellow-400' : 'text-white group-hover:text-yellow-300'} truncate text-lg`;
+                title.innerText = list.name;
+                
+                const count = document.createElement('span');
+                count.className = 'text-xs text-gray-400';
+                count.innerText = `${list.names.length} personas`;
+                
+                infoDiv.appendChild(title);
+                infoDiv.appendChild(count);
+
+                const editBtn = document.createElement('button');
+                editBtn.className = 'bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-600 p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all';
+                editBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg>';
+                editBtn.title = "Editar lista";
+                editBtn.onclick = (e) => { e.stopPropagation(); showEditList(list.id); };
+                
+                div.appendChild(infoDiv);
+                div.appendChild(editBtn);
+                container.appendChild(div);
+            });
+        }
+
+        function showEditList(id = null) {
+            document.getElementById('view-list-manager').classList.add('hidden-view');
+            document.getElementById('view-list-editor').classList.remove('hidden-view');
+            document.getElementById('list-error-msg').classList.add('hidden-view');
+            
+            const btnDelete = document.getElementById('btn-delete-list');
+            
+            if (id) {
+                const list = savedLists.find(l => l.id === id);
+                document.getElementById('editor-title').innerText = 'Editar Lista';
+                document.getElementById('list-name-input').value = list.name;
+                document.getElementById('names-input').value = list.names.join('\n');
+                currentEditingId = id;
+                btnDelete.classList.remove('hidden');
+            } else {
+                document.getElementById('editor-title').innerText = 'Nueva Lista';
+                document.getElementById('list-name-input').value = '';
+                document.getElementById('names-input').value = '';
+                currentEditingId = null;
+                btnDelete.classList.add('hidden');
+            }
+        }
+
+        function hideEditList() {
+            document.getElementById('view-list-manager').classList.remove('hidden-view');
+            document.getElementById('view-list-editor').classList.add('hidden-view');
+            currentEditingId = null;
+        }
+
+        function saveList() {
+            const nameInput = document.getElementById('list-name-input').value.trim();
+            const namesInput = document.getElementById('names-input').value;
+            const errorMsg = document.getElementById('list-error-msg');
+            
+            const listName = nameInput || 'Lista sin nombre';
+            const parsedNames = namesInput.split(/[\n,]+/).map(n => n.trim()).filter(n => n.length > 0);
+            
+            if(parsedNames.length === 0) {
+                errorMsg.classList.remove('hidden-view');
+                return;
+            }
+            errorMsg.classList.add('hidden-view');
+
+            if (currentEditingId) {
+                const list = savedLists.find(l => l.id === currentEditingId);
+                list.name = listName;
+                list.names = parsedNames;
+            } else {
+                const newList = {
+                    id: Date.now(),
+                    name: listName,
+                    names: parsedNames
+                };
+                savedLists.push(newList);
+                currentEditingId = newList.id;
+            }
+            
+            saveListsToStorage();
+            hideEditList();
+            selectList(currentEditingId); // Selecciona y renderiza automáticamente
+        }
+
+        function deleteCurrentList() {
+            // Un pequeño mensaje de confirmación en UI (sin usar alert)
+            document.getElementById('editor-title').innerText = '¿Borrar Lista?';
+            document.getElementById('btn-delete-list').classList.add('hidden');
+            
+            const oldSaveBtn = document.querySelector('#view-list-editor .bg-blue-600');
+            const clone = oldSaveBtn.cloneNode(true);
+            oldSaveBtn.parentNode.replaceChild(clone, oldSaveBtn);
+            
+            clone.classList.replace('bg-blue-600', 'bg-red-600');
+            clone.classList.replace('hover:bg-blue-500', 'hover:bg-red-500');
+            clone.innerText = "Sí, eliminar definitivamente";
+            
+            clone.onclick = () => {
+                savedLists = savedLists.filter(l => l.id !== currentEditingId);
+                saveListsToStorage();
+                hideEditList();
+                
+                if(savedLists.length > 0) {
+                    selectList(savedLists[0].id);
+                } else {
+                    currentActiveListId = null;
+                    document.getElementById('current-list-title').innerText = '';
+                    namesList = ["Crea", "una", "Lista"];
+                    drawRoulette();
+                    renderLists();
+                }
+
+                // Restaurar botón
+                clone.parentNode.replaceChild(oldSaveBtn, clone);
+                oldSaveBtn.onclick = saveList;
+            };
+            
+            // Volver al estado normal si le da a Volver
+            const backBtn = document.querySelector('#view-list-editor .bg-gray-600');
+            backBtn.addEventListener('click', function restoreBtn() {
+                if(clone.parentNode) clone.parentNode.replaceChild(oldSaveBtn, clone);
+                oldSaveBtn.onclick = saveList;
+                backBtn.removeEventListener('click', restoreBtn);
+            }, {once: true});
+        }
+
+        function selectList(id) {
+            if(isSpinning) return;
+            
+            const list = savedLists.find(l => l.id === id);
+            if(list) {
+                currentActiveListId = id;
+                namesList = [...list.names];
+                
+                // Mostrar título en la zona de ruleta
+                document.getElementById('current-list-title').innerText = list.name.toUpperCase();
+                
+                // Relleno si hay muy pocos (para que la ruleta se dibuje bien visualmente)
+                if (namesList.length < 2) {
+                    namesList.push("Tira otra", "vez");
+                }
+
+                currentAngle = 0;
+                drawRoulette();
+                renderLists(); // Refresca colores de selección
+            }
+        }
+
+        // --- DIBUJO DE RULETA ---
+        function drawRoulette() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = Math.min(centerX, centerY) - 10;
+
+            const sliceAngle = (2 * Math.PI) / namesList.length;
+
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(currentAngle);
+
+            for (let i = 0; i < namesList.length; i++) {
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.arc(0, 0, radius, i * sliceAngle, (i + 1) * sliceAngle);
+                ctx.closePath();
+                ctx.fillStyle = colors[i % colors.length];
+                ctx.fill();
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = '#0f172a';
+                ctx.stroke();
+
+                ctx.save();
+                ctx.rotate(i * sliceAngle + sliceAngle / 2);
+                ctx.textAlign = 'right';
+                ctx.fillStyle = 'white';
+                
+                let fontSize = 24;
+                if(namesList.length > 20) fontSize = 18;
+                if(namesList.length > 40) fontSize = 14;
+                
+                ctx.font = `bold ${fontSize}px Montserrat`;
+                ctx.shadowColor = 'rgba(0,0,0,0.8)';
+                ctx.shadowBlur = 4;
+                
+                let text = namesList[i];
+                if(text.length > 20) text = text.substring(0, 18) + '...';
+                
+                ctx.fillText(text, radius - 30, fontSize/3);
+                ctx.restore();
+            }
+            ctx.restore();
+        }
+
+        function spinRoulette() {
+            if (isSpinning || namesList.length === 0 || (namesList.length === 3 && namesList[0] === "Crea")) return;
+            
+            isSpinning = true;
+            document.getElementById('spin-btn').disabled = true;
+            spinVelocity = 0.5 + Math.random() * 0.2; 
+            
+            animateRoulette();
+        }
+
+        function animateRoulette() {
+            currentAngle += spinVelocity;
+            
+            if (spinVelocity > 0.05) {
+                spinVelocity *= 0.99; 
+            } else if (spinVelocity > 0.002) {
+                spinVelocity *= 0.98; 
+            } else {
+                spinVelocity = 0;
+                isSpinning = false;
+                document.getElementById('spin-btn').disabled = false;
+                determineWinner();
+                cancelAnimationFrame(animationFrame);
+                return;
+            }
+
+            drawRoulette();
+            animationFrame = requestAnimationFrame(animateRoulette);
+        }
+
+        function determineWinner() {
+            const normalizedAngle = currentAngle % (2 * Math.PI);
+            const pointerAngle = (3 * Math.PI / 2); 
+            
+            let winAngle = (pointerAngle - normalizedAngle + 2 * Math.PI) % (2 * Math.PI);
+            
+            const sliceAngle = (2 * Math.PI) / namesList.length;
+            const winningIndex = Math.floor(winAngle / sliceAngle);
+            
+            const winner = namesList[winningIndex];
+            
+            showWinnerModal(winner);
+        }
+
+        function showWinnerModal(winnerName) {
+            const modal = document.getElementById('winner-modal');
+            const content = document.getElementById('winner-modal-content');
+            document.getElementById('winner-name').innerText = winnerName;
+            
+            modal.classList.remove('hidden-view');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-90');
+                content.classList.add('scale-100');
+            }, 10);
+            
+            let colorsWin = ['#facc15', '#ef4444', '#22c55e', '#3b82f6', '#facc15'];
+            let colorIdx = 0;
+            const flashInt = setInterval(() => {
+                if(modal.classList.contains('hidden-view')) {
+                    clearInterval(flashInt);
+                } else {
+                    document.getElementById('winner-name').style.color = colorsWin[colorIdx];
+                    colorIdx = (colorIdx + 1) % colorsWin.length;
+                }
+            }, 200);
+        }
+
+        function closeWinnerModal() {
+            const modal = document.getElementById('winner-modal');
+            const content = document.getElementById('winner-modal-content');
+            
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-90');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden-view');
+            }, 500); 
+        }
+
+        // ==========================================
+        // INICIALIZACIÓN
+        // ==========================================
+        window.onload = () => {
+            initBingoBoard();
+            initLists();
+            switchView('bingo'); 
+        };
+        
+        window.onresize = () => {
+            if(!document.getElementById('view-sorteo').classList.contains('hidden-view')){
+                drawRoulette();
+            }
+        }
+
+    </script>
+</body>
+</html>
