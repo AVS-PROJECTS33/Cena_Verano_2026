@@ -12,8 +12,8 @@
         body {
             font-family: 'Montserrat', sans-serif;
             background-color: #0f172a; /* Slate 900 oscuro */
-            /* CAMBIO: Imagen de fondo con filtro mucho menos oscuro (40%) para que la foto se vea bien */
-            background-image: linear-gradient(rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.4)), url('https://raw.githubusercontent.com/AVS-PROJECTS33/Cena_Verano_2026/main/FOTOCENAVERANO.png');
+            /* CAMBIO: Reducida la opacidad del filtro oscuro al 15% para que los colores de la imagen resalten más */
+            background-image: linear-gradient(rgba(15, 23, 42, 0.15), rgba(15, 23, 42, 0.15)), url('https://raw.githubusercontent.com/AVS-PROJECTS33/Cena_Verano_2026/main/FOTOCENAVERANO.png');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -41,13 +41,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #000000;
+            background-color: rgba(0, 0, 0, 0.6); /* Fondo semi-transparente para ver un poco la foto */
             color: #ffffff;
-            border: 2px solid #334155;
+            border: 2px solid rgba(51, 65, 85, 0.8);
             border-radius: 0.5rem;
             font-size: 2vw; /* Escala con el ancho de la pantalla */
             font-weight: bold;
             transition: all 0.3s ease;
+            backdrop-filter: blur(2px); /* Ligero desenfoque en los números no cantados */
         }
 
         /* NUMEROS MARCADOS: Fondo Verde, TEXTO NEGRO */
@@ -57,6 +58,7 @@
             color: #000000; /* Texto en negro para mejor contraste */
             transform: scale(1.05);
             box-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
+            backdrop-filter: none; /* Quitamos desenfoque al cantar */
         }
 
         .bingo-number.last-drawn {
@@ -65,6 +67,7 @@
             color: #000000; /* Texto en negro */
             box-shadow: 0 0 25px rgba(16, 185, 129, 0.8);
             animation: pulse-green 1.5s infinite;
+            backdrop-filter: none;
         }
 
         @keyframes pulse-green {
@@ -84,7 +87,7 @@
         canvas {
             border-radius: 50%;
             box-shadow: 0 0 30px rgba(0,0,0,0.5);
-            background-color: #1e293b;
+            background-color: rgba(30, 41, 59, 0.9); /* Ruleta con un pelín de transparencia */
         }
 
         .play-button-center {
@@ -138,10 +141,10 @@
             width: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #1e293b; 
+            background: rgba(30, 41, 59, 0.5); 
         }
         ::-webkit-scrollbar-thumb {
-            background: #475569; 
+            background: rgba(71, 85, 105, 0.8); 
             border-radius: 4px;
         }
     </style>
@@ -149,18 +152,20 @@
 <body class="flex flex-col h-screen">
 
     <!-- Header / Navbar -->
-    <header class="bg-gray-900/50 backdrop-blur-md border-b border-gray-800/50 p-4 flex justify-between items-center shadow-lg h-[10vh]">
-        <div class="text-2xl font-black tracking-wider flex items-center gap-3 text-yellow-400">
+    <!-- CAMBIO: Reducida opacidad del header (bg-gray-900/30) -->
+    <header class="bg-gray-900/30 backdrop-blur-md border-b border-gray-800/30 p-4 flex justify-between items-center shadow-lg h-[10vh]">
+        <!-- CAMBIO: Añadido fondo semi-transparente al título y borde redondeado para mejor lectura sobre fotos claras -->
+        <div class="text-2xl font-black tracking-wider flex items-center gap-3 text-yellow-400 bg-black/40 px-4 py-2 rounded-xl backdrop-blur-sm">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
             CENA VERANO 2026
         </div>
         <div class="flex gap-4">
-            <button onclick="switchView('bingo')" id="tab-bingo" class="px-6 py-2 rounded-full font-bold transition-colors bg-blue-600 text-white hover:bg-blue-500">
+            <button onclick="switchView('bingo')" id="tab-bingo" class="px-6 py-2 rounded-full font-bold transition-colors bg-blue-600/90 text-white hover:bg-blue-500 shadow-md">
                 Jugar al Bingo
             </button>
-            <button onclick="switchView('sorteo')" id="tab-sorteo" class="px-6 py-2 rounded-full font-bold transition-colors bg-gray-700 text-gray-300 hover:bg-gray-600">
+            <button onclick="switchView('sorteo')" id="tab-sorteo" class="px-6 py-2 rounded-full font-bold transition-colors bg-gray-800/80 text-gray-200 hover:bg-gray-700 shadow-md">
                 Sorteo / Ruleta
             </button>
         </div>
@@ -168,12 +173,14 @@
 
     <!-- CONTENEDOR BINGO -->
     <main id="view-bingo" class="flex flex-1 h-[90vh]">
-        <!-- Panel Izquierdo: Controles y Número Actual (Ajustado para que el botón no desaparezca) -->
-        <div class="w-1/3 bg-gray-800/40 backdrop-blur-md p-6 flex flex-col items-center justify-between border-r border-gray-700/50 h-full overflow-y-auto">
+        <!-- Panel Izquierdo: Controles y Número Actual -->
+        <!-- CAMBIO: Reducida opacidad del panel izquierdo (bg-gray-800/20) -->
+        <div class="w-1/3 bg-gray-800/20 backdrop-blur-md p-6 flex flex-col items-center justify-between border-r border-gray-700/30 h-full overflow-y-auto">
             
             <div class="text-center w-full mb-4">
-                <h2 class="text-3xl font-bold text-gray-400 mb-4 uppercase tracking-widest">Número Actual</h2>
-                <div class="bg-black/90 border-4 border-yellow-500 rounded-3xl w-full aspect-[4/3] max-h-60 flex items-center justify-center shadow-2xl relative mx-auto overflow-hidden">
+                <!-- CAMBIO: Fondo oscuro al texto "Número Actual" para que resalte -->
+                <h2 class="text-3xl font-bold text-gray-200 mb-4 uppercase tracking-widest bg-black/40 inline-block px-6 py-1 rounded-full backdrop-blur-sm">Número Actual</h2>
+                <div class="bg-black/80 border-4 border-yellow-500 rounded-3xl w-full aspect-[4/3] max-h-60 flex items-center justify-center shadow-2xl relative mx-auto overflow-hidden">
                     <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent"></div>
                     <span id="current-number-display" class="text-9xl font-black text-white" style="font-size: 8rem;">--</span>
                 </div>
@@ -181,28 +188,33 @@
 
             <div class="w-full flex flex-col gap-4 flex-1 justify-end">
                 <!-- Botón Principal Play/Pause -->
-                <button id="toggleBingoBtn" onclick="toggleBingoAuto()" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-5 px-4 rounded-2xl text-2xl shadow-lg transition-transform transform active:scale-95 flex justify-center items-center gap-3">
+                <button id="toggleBingoBtn" onclick="toggleBingoAuto()" class="w-full bg-green-600/90 hover:bg-green-500 text-white font-bold py-5 px-4 rounded-2xl text-2xl shadow-lg transition-transform transform active:scale-95 flex justify-center items-center gap-3 backdrop-blur-sm">
                     <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                     <svg id="pauseIcon" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
                     <span id="toggleBingoText">INICIAR BINGO</span>
                 </button>
 
                 <!-- Panel de info extra -->
-                <div class="flex justify-between text-gray-300 text-xl px-2 my-1 font-semibold">
-                    <span>Extraídos: <span id="drawn-count" class="text-white">0</span>/90</span>
+                <!-- CAMBIO: Fondo semitransparente a la información -->
+                <div class="flex justify-between text-gray-200 text-xl px-4 py-2 my-1 font-semibold bg-black/40 rounded-xl backdrop-blur-sm border border-gray-700/50">
+                    <span>Extraídos: <span id="drawn-count" class="text-white font-bold">0</span>/90</span>
                     <span id="status-text" class="text-yellow-400">Esperando...</span>
                 </div>
 
                 <!-- Botón de Reinicio Seguro (Doble Confirmación) -->
-                <button id="resetBingoBtn" onclick="requestBingoReset()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-4 rounded-xl text-xl shadow-lg transition-colors flex items-center justify-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                    <span id="resetBingoText">Reiniciar Partida</span>
-                </button>
+                <!-- CAMBIO: Botón más pequeño (py-2, text-lg, w-3/4 centrado) -->
+                <div class="w-full flex justify-center mt-2">
+                    <button id="resetBingoBtn" onclick="requestBingoReset()" class="w-3/4 bg-red-600/90 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-xl text-lg shadow-lg transition-colors flex items-center justify-center gap-2 backdrop-blur-sm border border-red-500/50">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                        <span id="resetBingoText">Reiniciar</span>
+                    </button>
+                </div>
             </div>
         </div>
 
         <!-- Panel Derecho: Tablero de 90 números -->
-        <div class="w-2/3 bg-gray-900/40 backdrop-blur-md p-6 h-full">
+        <!-- CAMBIO: Reducida opacidad del panel derecho (bg-gray-900/20) -->
+        <div class="w-2/3 bg-gray-900/20 backdrop-blur-sm p-6 h-full">
             <div id="bingo-board" class="bingo-grid">
                 <!-- Se rellena con JS -->
             </div>
@@ -213,50 +225,51 @@
     <main id="view-sorteo" class="flex flex-1 h-[90vh] hidden-view bg-transparent">
         
         <!-- Panel Lateral para Nombres y Listas -->
-        <div class="w-1/4 bg-gray-800/40 backdrop-blur-md border-r border-gray-700/50 p-6 flex flex-col relative h-full">
+        <!-- CAMBIO: Reducida opacidad del panel de listas (bg-gray-800/30) -->
+        <div class="w-1/4 bg-gray-800/30 backdrop-blur-md border-r border-gray-700/40 p-6 flex flex-col relative h-full">
             
             <!-- VISTA: GESTOR DE LISTAS -->
             <div id="view-list-manager" class="flex-1 flex flex-col h-full min-h-0">
-                <h2 class="text-2xl font-bold mb-4 text-yellow-400">Mis Listas</h2>
+                <h2 class="text-2xl font-bold mb-4 text-yellow-400 bg-black/40 inline-block px-4 py-1 rounded-lg backdrop-blur-sm w-fit">Mis Listas</h2>
                 
                 <!-- Contenedor de listas guardadas -->
                 <div id="lists-container" class="flex-1 overflow-y-auto space-y-2 mb-4 pr-2">
                     <!-- Se llena con JS -->
                 </div>
 
-                <button onclick="showEditList()" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-4 px-4 rounded-xl mt-auto transition-colors flex items-center justify-center gap-2 shadow-lg">
+                <button onclick="showEditList()" class="w-full bg-green-600/90 hover:bg-green-500 text-white font-bold py-4 px-4 rounded-xl mt-auto transition-colors flex items-center justify-center gap-2 shadow-lg backdrop-blur-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
                     Crear Nueva Lista
                 </button>
             </div>
 
             <!-- VISTA: EDITAR/NUEVA LISTA -->
-            <div id="view-list-editor" class="flex-1 flex flex-col h-full hidden-view">
+            <div id="view-list-editor" class="flex-1 flex flex-col h-full hidden-view bg-gray-900/60 p-4 rounded-2xl border border-gray-700/50 backdrop-blur-md">
                 <div class="flex justify-between items-center mb-4">
                     <h2 id="editor-title" class="text-2xl font-bold text-yellow-400">Nueva Lista</h2>
-                    <button onclick="deleteCurrentList()" id="btn-delete-list" class="text-red-500 hover:text-red-400 hidden p-2">
+                    <button onclick="deleteCurrentList()" id="btn-delete-list" class="text-red-400 hover:text-red-300 hidden p-2 bg-red-900/30 rounded-lg">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                     </button>
                 </div>
                 
-                <input type="text" id="list-name-input" class="w-full bg-gray-900 text-white p-3 rounded-xl border border-gray-600 focus:border-yellow-500 mb-3" placeholder="Ej: Departamento IT">
+                <input type="text" id="list-name-input" class="w-full bg-black/60 text-white p-3 rounded-xl border border-gray-600/50 focus:border-yellow-500 mb-3 backdrop-blur-sm" placeholder="Ej: Departamento IT">
                 
-                <p class="text-xs text-gray-400 mb-2">Escribe un nombre por línea o separados por comas.</p>
-                <textarea id="names-input" class="w-full flex-1 bg-gray-900 text-white p-4 rounded-xl border border-gray-600 focus:border-yellow-500 focus:outline-none resize-none text-lg mb-4" placeholder="Juan Pérez&#10;María López&#10;Carlos García..."></textarea>
+                <p class="text-xs text-gray-300 mb-2 font-medium">Escribe un nombre por línea o separados por comas.</p>
+                <textarea id="names-input" class="w-full flex-1 bg-black/60 text-white p-4 rounded-xl border border-gray-600/50 focus:border-yellow-500 focus:outline-none resize-none text-lg mb-4 backdrop-blur-sm" placeholder="Juan Pérez&#10;María López&#10;Carlos García..."></textarea>
                 
-                <p id="list-error-msg" class="text-red-400 text-sm mb-2 hidden-view">Debes añadir al menos 1 nombre.</p>
+                <p id="list-error-msg" class="text-red-400 text-sm mb-2 hidden-view bg-red-900/40 p-2 rounded-lg">Debes añadir al menos 1 nombre.</p>
 
                 <div class="flex gap-2 mt-auto">
-                    <button onclick="hideEditList()" class="w-1/3 bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 rounded-xl transition-colors">Volver</button>
-                    <button onclick="saveList()" class="w-2/3 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-colors shadow-lg">Guardar y Usar</button>
+                    <button onclick="hideEditList()" class="w-1/3 bg-gray-600/90 hover:bg-gray-500 text-white font-bold py-3 rounded-xl transition-colors">Volver</button>
+                    <button onclick="saveList()" class="w-2/3 bg-blue-600/90 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-colors shadow-lg">Guardar y Usar</button>
                 </div>
             </div>
 
         </div>
 
         <!-- Área de la Ruleta -->
-        <div class="w-3/4 flex flex-col items-center justify-center relative p-8">
-            <h3 id="current-list-title" class="absolute top-8 left-8 text-3xl font-black text-gray-700 tracking-wider"></h3>
+        <!-- CAMBIO: Fondo semitransparente detrás de la ruleta para separarla de la foto un poco -->
+        <div class="w-3/4 flex flex-col items-center justify-center relative p-8 bg-gray-900/10 backdrop-blur-sm">
             
             <div id="roulette-container">
                 <div class="pointer"></div>
@@ -269,11 +282,11 @@
     </main>
 
     <!-- Modal de Ganador Sorteo -->
-    <div id="winner-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 hidden-view opacity-0 transition-opacity duration-500">
-        <div class="bg-gray-800/80 backdrop-blur-md border-4 border-yellow-500 rounded-3xl p-12 text-center shadow-2xl max-w-2xl transform scale-90 transition-transform duration-500" id="winner-modal-content">
+    <div id="winner-modal" class="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-50 hidden-view opacity-0 transition-opacity duration-500">
+        <div class="bg-gray-900/90 backdrop-blur-xl border-4 border-yellow-500 rounded-3xl p-12 text-center shadow-2xl max-w-3xl min-w-[50vw] transform scale-90 transition-transform duration-500" id="winner-modal-content">
             <h2 class="text-4xl text-gray-300 font-bold mb-4">¡TENEMOS UN GANADOR/A!</h2>
-            <div id="winner-name" class="text-7xl font-black text-yellow-400 mb-8 py-6 uppercase break-words">Nombre</div>
-            <button onclick="closeWinnerModal()" class="bg-white text-black font-bold py-3 px-8 rounded-full text-xl hover:bg-gray-200 transition-colors">
+            <div id="winner-name" class="text-7xl font-black text-yellow-400 mb-8 py-6 uppercase break-words drop-shadow-lg">Nombre</div>
+            <button onclick="closeWinnerModal()" class="bg-white/90 text-black font-bold py-3 px-8 rounded-full text-xl hover:bg-white transition-colors shadow-lg">
                 Continuar
             </button>
         </div>
@@ -294,18 +307,16 @@
                 viewBingo.classList.remove('hidden-view');
                 viewSorteo.classList.add('hidden-view');
                 
-                tabBingo.classList.replace('bg-gray-700', 'bg-blue-600');
-                tabBingo.classList.replace('text-gray-300', 'text-white');
-                tabSorteo.classList.replace('bg-blue-600', 'bg-gray-700');
-                tabSorteo.classList.replace('text-white', 'text-gray-300');
+                // Estilos de pestaña activa (Bingo)
+                tabBingo.className = "px-6 py-2 rounded-full font-bold transition-colors bg-blue-600/90 text-white hover:bg-blue-500 shadow-md";
+                tabSorteo.className = "px-6 py-2 rounded-full font-bold transition-colors bg-gray-800/80 text-gray-200 hover:bg-gray-700 shadow-md";
             } else {
                 viewSorteo.classList.remove('hidden-view');
                 viewBingo.classList.add('hidden-view');
                 
-                tabSorteo.classList.replace('bg-gray-700', 'bg-blue-600');
-                tabSorteo.classList.replace('text-gray-300', 'text-white');
-                tabBingo.classList.replace('bg-blue-600', 'bg-gray-700');
-                tabBingo.classList.replace('text-white', 'text-gray-300');
+                // Estilos de pestaña activa (Sorteo)
+                tabSorteo.className = "px-6 py-2 rounded-full font-bold transition-colors bg-blue-600/90 text-white hover:bg-blue-500 shadow-md";
+                tabBingo.className = "px-6 py-2 rounded-full font-bold transition-colors bg-gray-800/80 text-gray-200 hover:bg-gray-700 shadow-md";
                 
                 drawRoulette();
             }
@@ -389,8 +400,7 @@
             isPlaying = true;
             document.getElementById('status-text').innerText = "Sorteando...";
             
-            document.getElementById('toggleBingoBtn').classList.replace('bg-green-600', 'bg-yellow-600');
-            document.getElementById('toggleBingoBtn').classList.replace('hover:bg-green-500', 'hover:bg-yellow-500');
+            document.getElementById('toggleBingoBtn').className = "w-full bg-yellow-600/90 hover:bg-yellow-500 text-white font-bold py-5 px-4 rounded-2xl text-2xl shadow-lg transition-transform transform active:scale-95 flex justify-center items-center gap-3 backdrop-blur-sm";
             document.getElementById('playIcon').classList.add('hidden');
             document.getElementById('pauseIcon').classList.remove('hidden');
             document.getElementById('toggleBingoText').innerText = "PAUSAR (LÍNEA/BINGO)";
@@ -405,15 +415,15 @@
             clearInterval(bingoInterval);
             document.getElementById('status-text').innerText = "Pausado";
             
-            document.getElementById('toggleBingoBtn').classList.replace('bg-yellow-600', 'bg-green-600');
-            document.getElementById('toggleBingoBtn').classList.replace('hover:bg-yellow-500', 'hover:bg-green-500');
+            const btn = document.getElementById('toggleBingoBtn');
+            btn.className = "w-full bg-green-600/90 hover:bg-green-500 text-white font-bold py-5 px-4 rounded-2xl text-2xl shadow-lg transition-transform transform active:scale-95 flex justify-center items-center gap-3 backdrop-blur-sm";
             document.getElementById('pauseIcon').classList.add('hidden');
             document.getElementById('playIcon').classList.remove('hidden');
             
             if(availableNumbers.length === 0) {
                 document.getElementById('toggleBingoText').innerText = "PARTIDA FINALIZADA";
-                document.getElementById('toggleBingoBtn').disabled = true;
-                document.getElementById('toggleBingoBtn').classList.add('opacity-50', 'cursor-not-allowed');
+                btn.disabled = true;
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
             } else {
                 document.getElementById('toggleBingoText').innerText = "CONTINUAR JUEGO";
             }
@@ -425,9 +435,8 @@
 
             if (resetConfirmStage === 0) {
                 resetConfirmStage = 1;
-                text.innerText = "¿Seguro? Click para Confirmar";
-                btn.classList.replace('bg-red-600', 'bg-orange-500');
-                btn.classList.replace('hover:bg-red-700', 'hover:bg-orange-600');
+                text.innerText = "¿Seguro?"; // Texto más corto para botón pequeño
+                btn.className = "w-3/4 bg-orange-500/90 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-xl text-lg shadow-lg transition-colors flex items-center justify-center gap-2 backdrop-blur-sm border border-orange-400/50";
                 
                 resetTimeout = setTimeout(() => {
                     cancelBingoReset();
@@ -437,8 +446,9 @@
                 resetBingoData();
                 cancelBingoReset(); 
                 
-                document.getElementById('toggleBingoBtn').disabled = false;
-                document.getElementById('toggleBingoBtn').classList.remove('opacity-50', 'cursor-not-allowed');
+                const playBtn = document.getElementById('toggleBingoBtn');
+                playBtn.disabled = false;
+                playBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                 document.getElementById('toggleBingoText').innerText = "INICIAR BINGO";
             }
         }
@@ -447,9 +457,8 @@
             const btn = document.getElementById('resetBingoBtn');
             const text = document.getElementById('resetBingoText');
             resetConfirmStage = 0;
-            text.innerText = "Reiniciar Partida";
-            btn.classList.replace('bg-orange-500', 'bg-red-600');
-            btn.classList.replace('hover:bg-orange-600', 'hover:bg-red-700');
+            text.innerText = "Reiniciar";
+            btn.className = "w-3/4 bg-red-600/90 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-xl text-lg shadow-lg transition-colors flex items-center justify-center gap-2 backdrop-blur-sm border border-red-500/50";
         }
 
 
@@ -508,35 +517,35 @@
             container.innerHTML = '';
             
             if (savedLists.length === 0) {
-                container.innerHTML = '<p class="text-gray-500 text-sm text-center mt-4">No hay listas guardadas.</p>';
+                container.innerHTML = '<p class="text-gray-400 font-medium text-sm text-center mt-4 bg-black/30 p-3 rounded-lg">No hay listas guardadas.</p>';
                 return;
             }
 
             savedLists.forEach(list => {
                 const div = document.createElement('div');
-                // Estilo base
-                let bgClass = list.id === currentActiveListId ? 'bg-blue-900 border-blue-500' : 'bg-gray-700 border-transparent';
-                let hoverClass = list.id === currentActiveListId ? 'hover:bg-blue-800' : 'hover:bg-gray-600';
+                // Estilo base actualizado para mejor contraste
+                let bgClass = list.id === currentActiveListId ? 'bg-blue-900/80 border-blue-400' : 'bg-black/40 border-gray-600/50';
+                let hoverClass = list.id === currentActiveListId ? 'hover:bg-blue-800/90' : 'hover:bg-black/60';
                 
-                div.className = `${bgClass} ${hoverClass} border p-4 rounded-xl cursor-pointer flex justify-between items-center group transition-colors`;
+                div.className = `${bgClass} ${hoverClass} border p-4 rounded-xl cursor-pointer flex justify-between items-center group transition-colors backdrop-blur-sm`;
                 div.onclick = () => selectList(list.id);
                 
                 const infoDiv = document.createElement('div');
                 infoDiv.className = 'flex flex-col overflow-hidden pr-2';
                 
                 const title = document.createElement('span');
-                title.className = `font-bold ${list.id === currentActiveListId ? 'text-yellow-400' : 'text-white group-hover:text-yellow-300'} truncate text-lg`;
+                title.className = `font-bold ${list.id === currentActiveListId ? 'text-yellow-400' : 'text-gray-200 group-hover:text-white'} truncate text-lg drop-shadow-md`;
                 title.innerText = list.name;
                 
                 const count = document.createElement('span');
-                count.className = 'text-xs text-gray-400';
+                count.className = 'text-xs text-gray-400 font-medium';
                 count.innerText = `${list.names.length} personas`;
                 
                 infoDiv.appendChild(title);
                 infoDiv.appendChild(count);
 
                 const editBtn = document.createElement('button');
-                editBtn.className = 'bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-600 p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all';
+                editBtn.className = 'bg-gray-700/80 text-gray-300 hover:text-white hover:bg-gray-600 p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all border border-gray-600/50';
                 editBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg>';
                 editBtn.title = "Editar lista";
                 editBtn.onclick = (e) => { e.stopPropagation(); showEditList(list.id); };
@@ -610,17 +619,16 @@
         }
 
         function deleteCurrentList() {
-            // Un pequeño mensaje de confirmación en UI (sin usar alert)
             document.getElementById('editor-title').innerText = '¿Borrar Lista?';
             document.getElementById('btn-delete-list').classList.add('hidden');
             
-            const oldSaveBtn = document.querySelector('#view-list-editor .bg-blue-600');
+            const oldSaveBtn = document.querySelector('#view-list-editor .bg-blue-600\\/90');
             const clone = oldSaveBtn.cloneNode(true);
             oldSaveBtn.parentNode.replaceChild(clone, oldSaveBtn);
             
-            clone.classList.replace('bg-blue-600', 'bg-red-600');
+            clone.classList.replace('bg-blue-600/90', 'bg-red-600/90');
             clone.classList.replace('hover:bg-blue-500', 'hover:bg-red-500');
-            clone.innerText = "Sí, eliminar definitivamente";
+            clone.innerText = "Sí, eliminar";
             
             clone.onclick = () => {
                 savedLists = savedLists.filter(l => l.id !== currentEditingId);
@@ -631,19 +639,16 @@
                     selectList(savedLists[0].id);
                 } else {
                     currentActiveListId = null;
-                    document.getElementById('current-list-title').innerText = '';
                     namesList = ["Crea", "una", "Lista"];
                     drawRoulette();
                     renderLists();
                 }
 
-                // Restaurar botón
                 clone.parentNode.replaceChild(oldSaveBtn, clone);
                 oldSaveBtn.onclick = saveList;
             };
             
-            // Volver al estado normal si le da a Volver
-            const backBtn = document.querySelector('#view-list-editor .bg-gray-600');
+            const backBtn = document.querySelector('#view-list-editor .bg-gray-600\\/90');
             backBtn.addEventListener('click', function restoreBtn() {
                 if(clone.parentNode) clone.parentNode.replaceChild(oldSaveBtn, clone);
                 oldSaveBtn.onclick = saveList;
@@ -659,17 +664,13 @@
                 currentActiveListId = id;
                 namesList = [...list.names];
                 
-                // Mostrar título en la zona de ruleta
-                document.getElementById('current-list-title').innerText = list.name.toUpperCase();
-                
-                // Relleno si hay muy pocos (para que la ruleta se dibuje bien visualmente)
                 if (namesList.length < 2) {
                     namesList.push("Tira otra", "vez");
                 }
 
                 currentAngle = 0;
                 drawRoulette();
-                renderLists(); // Refresca colores de selección
+                renderLists(); 
             }
         }
 
