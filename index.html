@@ -11,17 +11,32 @@
         
         body {
             font-family: 'Montserrat', sans-serif;
-            background-color: #0f172a; /* Slate 900 oscuro */
-            /* CAMBIO: Reducida la opacidad del filtro oscuro al 15% para que los colores de la imagen resalten más */
+            background-color: #0f172a; 
+            color: white;
+            overflow: hidden; 
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        /* CLASES DE FONDOS DINÁMICOS */
+        .bg-bingo {
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(79, 70, 229, 0.5), transparent 60%),
+                radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.5), transparent 60%),
+                radial-gradient(circle at 50% 100%, rgba(234, 179, 8, 0.3), transparent 60%);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            transition: background-image 0.5s ease;
+        }
+
+        .bg-sorteo {
             background-image: linear-gradient(rgba(15, 23, 42, 0.15), rgba(15, 23, 42, 0.15)), url('https://raw.githubusercontent.com/AVS-PROJECTS33/Cena_Verano_2026/main/FOTOCENAVERANO.png');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            color: white;
-            overflow: hidden; /* Evitar scroll en la TV */
-            margin: 0;
-            padding: 0;
-            user-select: none;
+            transition: background-image 0.5s ease;
         }
 
         /* Utilidad para ocultar elementos fluidamente */
@@ -41,30 +56,29 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: rgba(0, 0, 0, 0.6); /* Fondo semi-transparente para ver un poco la foto */
+            background-color: rgba(0, 0, 0, 0.6); 
             color: #ffffff;
             border: 2px solid rgba(51, 65, 85, 0.8);
             border-radius: 0.5rem;
-            font-size: 2vw; /* Escala con el ancho de la pantalla */
+            font-size: 2vw; 
             font-weight: bold;
             transition: all 0.3s ease;
-            backdrop-filter: blur(2px); /* Ligero desenfoque en los números no cantados */
+            backdrop-filter: blur(2px);
         }
 
-        /* NUMEROS MARCADOS: Fondo Verde, TEXTO NEGRO */
         .bingo-number.drawn {
             background-color: #22c55e; 
             border-color: #16a34a;
-            color: #000000; /* Texto en negro para mejor contraste */
+            color: #000000; 
             transform: scale(1.05);
             box-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
-            backdrop-filter: none; /* Quitamos desenfoque al cantar */
+            backdrop-filter: none; 
         }
 
         .bingo-number.last-drawn {
             background-color: #10b981;
             border-color: #059669;
-            color: #000000; /* Texto en negro */
+            color: #000000; 
             box-shadow: 0 0 25px rgba(16, 185, 129, 0.8);
             animation: pulse-green 1.5s infinite;
             backdrop-filter: none;
@@ -87,7 +101,7 @@
         canvas {
             border-radius: 50%;
             box-shadow: 0 0 30px rgba(0,0,0,0.5);
-            background-color: rgba(30, 41, 59, 0.9); /* Ruleta con un pelín de transparencia */
+            background-color: rgba(30, 41, 59, 0.9); 
         }
 
         .play-button-center {
@@ -131,9 +145,11 @@
             height: 0; 
             border-left: 20px solid transparent;
             border-right: 20px solid transparent;
-            border-top: 40px solid #facc15; /* Flecha amarilla */
+            border-top: 45px solid #facc15; 
             z-index: 20;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
+            transform-origin: top center; 
+            transition: transform 0.05s ease-out;
         }
 
         /* Custom Scrollbar */
@@ -149,12 +165,10 @@
         }
     </style>
 </head>
-<body class="flex flex-col h-screen">
+<body id="main-body" class="flex flex-col h-screen bg-bingo">
 
     <!-- Header / Navbar -->
-    <!-- CAMBIO: Reducida opacidad del header (bg-gray-900/30) -->
     <header class="bg-gray-900/30 backdrop-blur-md border-b border-gray-800/30 p-4 flex justify-between items-center shadow-lg h-[10vh]">
-        <!-- CAMBIO: Añadido fondo semi-transparente al título y borde redondeado para mejor lectura sobre fotos claras -->
         <div class="text-2xl font-black tracking-wider flex items-center gap-3 text-yellow-400 bg-black/40 px-4 py-2 rounded-xl backdrop-blur-sm">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -173,12 +187,9 @@
 
     <!-- CONTENEDOR BINGO -->
     <main id="view-bingo" class="flex flex-1 h-[90vh]">
-        <!-- Panel Izquierdo: Controles y Número Actual -->
-        <!-- CAMBIO: Reducida opacidad del panel izquierdo (bg-gray-800/20) -->
         <div class="w-1/3 bg-gray-800/20 backdrop-blur-md p-6 flex flex-col items-center justify-between border-r border-gray-700/30 h-full overflow-y-auto">
             
             <div class="text-center w-full mb-4">
-                <!-- CAMBIO: Fondo oscuro al texto "Número Actual" para que resalte -->
                 <h2 class="text-3xl font-bold text-gray-200 mb-4 uppercase tracking-widest bg-black/40 inline-block px-6 py-1 rounded-full backdrop-blur-sm">Número Actual</h2>
                 <div class="bg-black/80 border-4 border-yellow-500 rounded-3xl w-full aspect-[4/3] max-h-60 flex items-center justify-center shadow-2xl relative mx-auto overflow-hidden">
                     <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent"></div>
@@ -187,22 +198,17 @@
             </div>
 
             <div class="w-full flex flex-col gap-4 flex-1 justify-end">
-                <!-- Botón Principal Play/Pause -->
                 <button id="toggleBingoBtn" onclick="toggleBingoAuto()" class="w-full bg-green-600/90 hover:bg-green-500 text-white font-bold py-5 px-4 rounded-2xl text-2xl shadow-lg transition-transform transform active:scale-95 flex justify-center items-center gap-3 backdrop-blur-sm">
                     <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                     <svg id="pauseIcon" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
                     <span id="toggleBingoText">INICIAR BINGO</span>
                 </button>
 
-                <!-- Panel de info extra -->
-                <!-- CAMBIO: Fondo semitransparente a la información -->
                 <div class="flex justify-between text-gray-200 text-xl px-4 py-2 my-1 font-semibold bg-black/40 rounded-xl backdrop-blur-sm border border-gray-700/50">
                     <span>Extraídos: <span id="drawn-count" class="text-white font-bold">0</span>/90</span>
                     <span id="status-text" class="text-yellow-400">Esperando...</span>
                 </div>
 
-                <!-- Botón de Reinicio Seguro (Doble Confirmación) -->
-                <!-- CAMBIO: Botón más pequeño (py-2, text-lg, w-3/4 centrado) -->
                 <div class="w-full flex justify-center mt-2">
                     <button id="resetBingoBtn" onclick="requestBingoReset()" class="w-3/4 bg-red-600/90 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-xl text-lg shadow-lg transition-colors flex items-center justify-center gap-2 backdrop-blur-sm border border-red-500/50">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
@@ -212,11 +218,8 @@
             </div>
         </div>
 
-        <!-- Panel Derecho: Tablero de 90 números -->
-        <!-- CAMBIO: Reducida opacidad del panel derecho (bg-gray-900/20) -->
-        <div class="w-2/3 bg-gray-900/20 backdrop-blur-sm p-6 h-full">
+        <div class="w-2/3 bg-gray-900/50 backdrop-blur-sm p-6 h-full border-l border-gray-700/30">
             <div id="bingo-board" class="bingo-grid">
-                <!-- Se rellena con JS -->
             </div>
         </div>
     </main>
@@ -224,17 +227,12 @@
     <!-- CONTENEDOR SORTEO (RULETA) -->
     <main id="view-sorteo" class="flex flex-1 h-[90vh] hidden-view bg-transparent">
         
-        <!-- Panel Lateral para Nombres y Listas -->
-        <!-- CAMBIO: Reducida opacidad del panel de listas (bg-gray-800/30) -->
         <div class="w-1/4 bg-gray-800/30 backdrop-blur-md border-r border-gray-700/40 p-6 flex flex-col relative h-full">
             
-            <!-- VISTA: GESTOR DE LISTAS -->
             <div id="view-list-manager" class="flex-1 flex flex-col h-full min-h-0">
                 <h2 class="text-2xl font-bold mb-4 text-yellow-400 bg-black/40 inline-block px-4 py-1 rounded-lg backdrop-blur-sm w-fit">Mis Listas</h2>
                 
-                <!-- Contenedor de listas guardadas -->
                 <div id="lists-container" class="flex-1 overflow-y-auto space-y-2 mb-4 pr-2">
-                    <!-- Se llena con JS -->
                 </div>
 
                 <button onclick="showEditList()" class="w-full bg-green-600/90 hover:bg-green-500 text-white font-bold py-4 px-4 rounded-xl mt-auto transition-colors flex items-center justify-center gap-2 shadow-lg backdrop-blur-sm">
@@ -243,7 +241,6 @@
                 </button>
             </div>
 
-            <!-- VISTA: EDITAR/NUEVA LISTA -->
             <div id="view-list-editor" class="flex-1 flex flex-col h-full hidden-view bg-gray-900/60 p-4 rounded-2xl border border-gray-700/50 backdrop-blur-md">
                 <div class="flex justify-between items-center mb-4">
                     <h2 id="editor-title" class="text-2xl font-bold text-yellow-400">Nueva Lista</h2>
@@ -267,10 +264,7 @@
 
         </div>
 
-        <!-- Área de la Ruleta -->
-        <!-- CAMBIO: Fondo semitransparente detrás de la ruleta para separarla de la foto un poco -->
         <div class="w-3/4 flex flex-col items-center justify-center relative p-8 bg-gray-900/10 backdrop-blur-sm">
-            
             <div id="roulette-container">
                 <div class="pointer"></div>
                 <canvas id="roulette-canvas" width="800" height="800" class="w-full h-full"></canvas>
@@ -295,6 +289,47 @@
 
     <script>
         // ==========================================
+        // SOPORTE PARA BOTÓN FÍSICO USB (y Teclado)
+        // ==========================================
+        document.addEventListener('keydown', (event) => {
+            // Ignorar si estamos escribiendo en los inputs para no disparar la ruleta por error
+            if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
+
+            // La mayoría de botones USB envían Espacio o Enter
+            if (event.code === 'Space' || event.code === 'Enter') {
+                
+                if (event.code === 'Space') event.preventDefault(); // Evita scroll de pantalla
+
+                const viewBingo = document.getElementById('view-bingo');
+                const viewSorteo = document.getElementById('view-sorteo');
+                const winnerModal = document.getElementById('winner-modal');
+
+                // 1. Si hay un cartel de ganador en pantalla, el botón lo cierra
+                if (!winnerModal.classList.contains('hidden-view')) {
+                    closeWinnerModal();
+                    return;
+                }
+
+                // 2. Si estamos en BINGO, el botón pausa/reanuda
+                if (!viewBingo.classList.contains('hidden-view')) {
+                    // Evitar iniciar si se está reseteando
+                    if(resetConfirmStage === 0 && document.getElementById('toggleBingoBtn').disabled === false) {
+                        toggleBingoAuto();
+                    }
+                }
+                
+                // 3. Si estamos en SORTEO, el botón gira la ruleta
+                else if (!viewSorteo.classList.contains('hidden-view')) {
+                    // Solo si no está girando ya, y hay lista
+                    if (!isSpinning && namesList.length > 0 && namesList[0] !== "Crea") {
+                        spinRoulette();
+                    }
+                }
+            }
+        });
+
+
+        // ==========================================
         // SISTEMA DE NAVEGACIÓN
         // ==========================================
         function switchView(viewName) {
@@ -302,19 +337,24 @@
             const viewSorteo = document.getElementById('view-sorteo');
             const tabBingo = document.getElementById('tab-bingo');
             const tabSorteo = document.getElementById('tab-sorteo');
+            const body = document.getElementById('main-body');
 
             if (viewName === 'bingo') {
                 viewBingo.classList.remove('hidden-view');
                 viewSorteo.classList.add('hidden-view');
                 
-                // Estilos de pestaña activa (Bingo)
+                body.classList.remove('bg-sorteo');
+                body.classList.add('bg-bingo');
+                
                 tabBingo.className = "px-6 py-2 rounded-full font-bold transition-colors bg-blue-600/90 text-white hover:bg-blue-500 shadow-md";
                 tabSorteo.className = "px-6 py-2 rounded-full font-bold transition-colors bg-gray-800/80 text-gray-200 hover:bg-gray-700 shadow-md";
             } else {
                 viewSorteo.classList.remove('hidden-view');
                 viewBingo.classList.add('hidden-view');
                 
-                // Estilos de pestaña activa (Sorteo)
+                body.classList.remove('bg-bingo');
+                body.classList.add('bg-sorteo');
+                
                 tabSorteo.className = "px-6 py-2 rounded-full font-bold transition-colors bg-blue-600/90 text-white hover:bg-blue-500 shadow-md";
                 tabBingo.className = "px-6 py-2 rounded-full font-bold transition-colors bg-gray-800/80 text-gray-200 hover:bg-gray-700 shadow-md";
                 
@@ -329,6 +369,7 @@
         let availableNumbers = [];
         let drawnNumbers = [];
         let bingoInterval = null;
+        let countdownInterval = null;
         let isPlaying = false;
         
         let resetConfirmStage = 0;
@@ -361,6 +402,35 @@
             }
             
             stopBingoAuto();
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel(); // Detener audio si reiniciamos
+        }
+
+        // ==========================================
+        // NUEVA FUNCIÓN DE AUDIO
+        // ==========================================
+        function announceNumber(num) {
+            // Comprobar si el navegador soporta voz
+            if (!('speechSynthesis' in window)) return;
+            
+            window.speechSynthesis.cancel(); // Detener cualquier audio previo
+            
+            let numStr = num.toString();
+            let textToSpeak = "";
+            
+            if (numStr.length === 2) {
+                // Formato: "Setenta y cinco... siete... cinco"
+                // Añadimos comas para generar pausas naturales en la voz
+                textToSpeak = `${num}, , ${numStr[0]}, , ${numStr[1]}`;
+            } else {
+                // Formato: "El... siete"
+                textToSpeak = `El , , ${num}`;
+            }
+            
+            const utterance = new SpeechSynthesisUtterance(textToSpeak);
+            utterance.lang = 'es-ES'; // Voz en español de España
+            utterance.rate = 0.85; // Un poco más despacio para darle intriga
+            
+            window.speechSynthesis.speak(utterance);
         }
 
         function drawSingleNumber() {
@@ -384,6 +454,8 @@
             
             const boardCell = document.getElementById(`num-${number}`);
             boardCell.classList.add('drawn', 'last-drawn');
+            
+            announceNumber(number); // Llamada a la función de audio cada vez que sale bola
         }
 
         function toggleBingoAuto() {
@@ -398,21 +470,40 @@
             if (availableNumbers.length === 0) return;
             
             isPlaying = true;
-            document.getElementById('status-text').innerText = "Sorteando...";
+            
+            // Desbloquear el motor de voz del navegador con la interacción de inicio
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                let initAudio = new SpeechSynthesisUtterance("Atención, comenzamos.");
+                initAudio.lang = 'es-ES';
+                window.speechSynthesis.speak(initAudio);
+            }
             
             document.getElementById('toggleBingoBtn').className = "w-full bg-yellow-600/90 hover:bg-yellow-500 text-white font-bold py-5 px-4 rounded-2xl text-2xl shadow-lg transition-transform transform active:scale-95 flex justify-center items-center gap-3 backdrop-blur-sm";
             document.getElementById('playIcon').classList.add('hidden');
             document.getElementById('pauseIcon').classList.remove('hidden');
             document.getElementById('toggleBingoText').innerText = "PAUSAR (LÍNEA/BINGO)";
 
-            drawSingleNumber();
-            // INTERVALO REDUCIDO A 5 SEGUNDOS (5000ms)
-            bingoInterval = setInterval(drawSingleNumber, 5000);
+            let countdown = 5;
+            document.getElementById('status-text').innerText = `Arrancando... (${countdown}s)`;
+            
+            countdownInterval = setInterval(() => {
+                countdown--;
+                if (countdown > 0) {
+                    document.getElementById('status-text').innerText = `Arrancando... (${countdown}s)`;
+                } else {
+                    clearInterval(countdownInterval);
+                    document.getElementById('status-text').innerText = "Sorteando...";
+                    drawSingleNumber();
+                    bingoInterval = setInterval(drawSingleNumber, 5000);
+                }
+            }, 1000);
         }
 
         function stopBingoAuto() {
             isPlaying = false;
             clearInterval(bingoInterval);
+            clearInterval(countdownInterval);
             document.getElementById('status-text').innerText = "Pausado";
             
             const btn = document.getElementById('toggleBingoBtn');
@@ -435,7 +526,7 @@
 
             if (resetConfirmStage === 0) {
                 resetConfirmStage = 1;
-                text.innerText = "¿Seguro?"; // Texto más corto para botón pequeño
+                text.innerText = "¿Seguro?"; 
                 btn.className = "w-3/4 bg-orange-500/90 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-xl text-lg shadow-lg transition-colors flex items-center justify-center gap-2 backdrop-blur-sm border border-orange-400/50";
                 
                 resetTimeout = setTimeout(() => {
@@ -490,7 +581,6 @@
             if (stored) {
                 savedLists = JSON.parse(stored);
             } else {
-                // Lista de ejemplo por defecto
                 savedLists = [{
                     id: Date.now(), 
                     name: 'Plantilla de Ejemplo', 
@@ -523,7 +613,6 @@
 
             savedLists.forEach(list => {
                 const div = document.createElement('div');
-                // Estilo base actualizado para mejor contraste
                 let bgClass = list.id === currentActiveListId ? 'bg-blue-900/80 border-blue-400' : 'bg-black/40 border-gray-600/50';
                 let hoverClass = list.id === currentActiveListId ? 'hover:bg-blue-800/90' : 'hover:bg-black/60';
                 
@@ -599,10 +688,13 @@
             }
             errorMsg.classList.add('hidden-view');
 
+            let targetId; // Creamos una variable para no perder el ID al ocultar el panel
+
             if (currentEditingId) {
                 const list = savedLists.find(l => l.id === currentEditingId);
                 list.name = listName;
                 list.names = parsedNames;
+                targetId = currentEditingId;
             } else {
                 const newList = {
                     id: Date.now(),
@@ -610,12 +702,12 @@
                     names: parsedNames
                 };
                 savedLists.push(newList);
-                currentEditingId = newList.id;
+                targetId = newList.id;
             }
             
             saveListsToStorage();
-            hideEditList();
-            selectList(currentEditingId); // Selecciona y renderiza automáticamente
+            hideEditList(); // Esto pone currentEditingId a null
+            selectList(targetId); // Usamos nuestro targetId guardado, ahora sí se mostrará al momento
         }
 
         function deleteCurrentList() {
@@ -679,7 +771,7 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
-            const radius = Math.min(centerX, centerY) - 10;
+            const radius = Math.min(centerX, centerY) - 15; 
 
             const sliceAngle = (2 * Math.PI) / namesList.length;
 
@@ -692,7 +784,12 @@
                 ctx.moveTo(0, 0);
                 ctx.arc(0, 0, radius, i * sliceAngle, (i + 1) * sliceAngle);
                 ctx.closePath();
-                ctx.fillStyle = colors[i % colors.length];
+                
+                let gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, radius);
+                gradient.addColorStop(0, '#ffffff40'); 
+                gradient.addColorStop(1, colors[i % colors.length]);
+                
+                ctx.fillStyle = gradient;
                 ctx.fill();
                 ctx.lineWidth = 2;
                 ctx.strokeStyle = '#0f172a';
@@ -701,22 +798,56 @@
                 ctx.save();
                 ctx.rotate(i * sliceAngle + sliceAngle / 2);
                 ctx.textAlign = 'right';
-                ctx.fillStyle = 'white';
+                ctx.textBaseline = 'middle'; 
                 
-                let fontSize = 24;
-                if(namesList.length > 20) fontSize = 18;
-                if(namesList.length > 40) fontSize = 14;
+                let fontSize = 32;
+                if(namesList.length > 20) fontSize = 22;
+                if(namesList.length > 40) fontSize = 16;
                 
-                ctx.font = `bold ${fontSize}px Montserrat`;
-                ctx.shadowColor = 'rgba(0,0,0,0.8)';
-                ctx.shadowBlur = 4;
+                ctx.font = `900 ${fontSize}px Montserrat`;
                 
                 let text = namesList[i];
-                if(text.length > 20) text = text.substring(0, 18) + '...';
+                if(text.length > 18) text = text.substring(0, 16) + '...';
                 
-                ctx.fillText(text, radius - 30, fontSize/3);
+                ctx.lineWidth = 4;
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+                ctx.strokeText(text, radius - 40, 0);
+                
+                ctx.fillStyle = 'white';
+                ctx.shadowColor = 'rgba(0,0,0,0.5)';
+                ctx.shadowBlur = 4;
+                ctx.fillText(text, radius - 40, 0);
+                
                 ctx.restore();
             }
+            
+            ctx.beginPath();
+            ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+            ctx.lineWidth = 10;
+            ctx.strokeStyle = '#1e293b';
+            ctx.stroke();
+            
+            for (let i = 0; i < namesList.length; i++) {
+                let angle = i * sliceAngle;
+                let pegX = Math.cos(angle) * (radius - 5);
+                let pegY = Math.sin(angle) * (radius - 5);
+                ctx.beginPath();
+                ctx.arc(pegX, pegY, 5, 0, 2 * Math.PI);
+                ctx.fillStyle = '#facc15';
+                ctx.fill();
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = '#000';
+                ctx.stroke();
+            }
+
+            ctx.beginPath();
+            ctx.arc(0, 0, 35, 0, 2 * Math.PI);
+            ctx.fillStyle = '#1e293b';
+            ctx.fill();
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = '#facc15';
+            ctx.stroke();
+            
             ctx.restore();
         }
 
@@ -725,22 +856,44 @@
             
             isSpinning = true;
             document.getElementById('spin-btn').disabled = true;
-            spinVelocity = 0.5 + Math.random() * 0.2; 
+            
+            // Más velocidad inicial para alargar el tiempo total
+            spinVelocity = 0.8 + Math.random() * 0.4; 
             
             animateRoulette();
         }
 
+        let lastPegIndex = -1;
+
         function animateRoulette() {
             currentAngle += spinVelocity;
             
-            if (spinVelocity > 0.05) {
-                spinVelocity *= 0.99; 
+            const sliceAngle = (2 * Math.PI) / namesList.length;
+            const pointerAngle = (3 * Math.PI / 2); 
+            const normalizedAngle = currentAngle % (2 * Math.PI);
+            const winAngle = (pointerAngle - normalizedAngle + 2 * Math.PI) % (2 * Math.PI);
+            
+            const currentPegIndex = Math.floor(winAngle / sliceAngle);
+
+            const pointer = document.querySelector('.pointer');
+            if (currentPegIndex !== lastPegIndex) {
+                lastPegIndex = currentPegIndex;
+                pointer.style.transform = `translateX(-50%) rotate(${-15 - Math.random() * 10}deg)`;
+                setTimeout(() => {
+                    pointer.style.transform = 'translateX(-50%) rotate(0deg)';
+                }, 50); 
+            }
+
+            // Ajustada la fricción (0.993 en vez de 0.985) para que tarde mucho más en detenerse (aprox +5 a +8 segundos)
+            if (spinVelocity > 0.1) {
+                spinVelocity *= 0.993; 
             } else if (spinVelocity > 0.002) {
-                spinVelocity *= 0.98; 
+                spinVelocity *= 0.985; 
             } else {
                 spinVelocity = 0;
                 isSpinning = false;
                 document.getElementById('spin-btn').disabled = false;
+                pointer.style.transform = 'translateX(-50%) rotate(0deg)'; 
                 determineWinner();
                 cancelAnimationFrame(animationFrame);
                 return;
