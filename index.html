@@ -304,11 +304,20 @@
     <!-- Modal de Prueba Oculta (Bingo Cantinela) -->
     <div id="challenge-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 hidden-view opacity-0 transition-opacity duration-500">
         <div class="bg-gray-900/95 backdrop-blur-xl border-4 border-red-500 rounded-3xl p-12 text-center shadow-[0_0_80px_rgba(239,68,68,0.7)] max-w-4xl min-w-[60vw] transform scale-90 transition-transform duration-500" id="challenge-modal-content">
-            <h2 class="text-5xl text-red-500 font-black mb-6 animate-pulse uppercase tracking-widest drop-shadow-md">¡NÚMERO TRAMPA!</h2>
-            <div id="challenge-text" class="text-6xl font-black text-white mb-10 py-8 uppercase break-words drop-shadow-lg leading-tight">Prueba...</div>
-            <button onclick="closeChallengeModal()" class="bg-red-600/90 text-white font-bold py-4 px-10 rounded-full text-2xl hover:bg-red-500 transition-colors shadow-lg">
-                ¡A cumplir!
-            </button>
+            <h2 class="text-5xl text-red-500 font-black mb-4 animate-pulse uppercase tracking-widest drop-shadow-md">¡NÚMERO TRAMPA!</h2>
+            <div id="challenge-number-display" class="text-8xl font-black text-yellow-400 mb-2 drop-shadow-lg">Nº --</div>
+            <div class="text-3xl text-gray-300 font-bold mb-8 uppercase tracking-wide">¡Todo el que lo tenga hace la prueba!</div>
+            <div id="challenge-text" class="text-5xl font-black text-white mb-10 py-4 uppercase break-words drop-shadow-lg leading-tight">Prueba...</div>
+            
+            <div class="flex justify-center gap-4">
+                <button id="btn-cumplir" onclick="closeChallengeModal(true)" class="bg-red-600/90 text-white font-bold py-4 px-10 rounded-full text-2xl hover:bg-red-500 transition-colors shadow-lg">
+                    ¡A cumplir!
+                </button>
+                <button id="btn-ir-ruleta" onclick="goToRouletteFromChallenge()" class="hidden-view bg-blue-600/90 text-white font-bold py-4 px-10 rounded-full text-2xl hover:bg-blue-500 transition-colors shadow-lg flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    ¡Ir a la Ruleta!
+                </button>
+            </div>
         </div>
     </div>
 
@@ -332,9 +341,14 @@
                     return;
                 }
                 
-                // Si la prueba oculta está en pantalla, el botón la cierra
+                // Si la prueba oculta está en pantalla, el botón la cierra (o va a ruleta si toca)
                 if (!challengeModal.classList.contains('hidden-view')) {
-                    closeChallengeModal();
+                    const btnRuleta = document.getElementById('btn-ir-ruleta');
+                    if (!btnRuleta.classList.contains('hidden-view')) {
+                        goToRouletteFromChallenge();
+                    } else {
+                        closeChallengeModal(true);
+                    }
                     return;
                 }
 
@@ -400,43 +414,42 @@
 
         let isCantinelaMode = false;
         const cantinelaPhrases = {
-            5: "La manita",
-            8: "Las gafas de la abuela",
-            13: "El gafe",
-            15: "La niña bonita",
-            18: "Ya puedes entrar a la discoteca",
-            22: "Los dos patitos",
-            25: "Navidad",
-            33: "La edad de Cristo",
-            44: "Las dos sillas",
-            55: "Los dos jubilados",
-            66: "Las dos escobas",
-            69: "¡Ese no hace falta explicarlo!",
-            77: "Las dos hachas",
-            88: "Las gafas de la suegra",
-            90: "¡Bingo o nos vamos al bar!"
+            3: "Club Super3!",
+            5: "La manita relajá, Manuel.",
+            15: "La niña bonita.",
+            17: "La Loreee! Lore lore Macu Macu!",
+            22: "Los dos patitos.",
+            29: "Pim pam, toma lacasitos!",
+            33: "Treinta y tres… no llego a fin de mes.",
+            39: "ESTEFANÍAAAAAAAAAA!",
+            69: "No hace falta explicarlo perros.",
+            74: "Yo por mi hija… MA-TO!",
+            75: "Franco… se fue al quinto."
         };
 
         // --- SISTEMA DE PRUEBAS OCULTAS ---
         const challengeList = [
-            "PRUEBA 1: BEBE UN CHUPITO",
-            "PRUEBA 2: INVITA A UN CHUPITO",
-            "PRUEBA 3: CARA O CRUZ",
-            "PRUEBA 4: ELIGE A 3 PARA BEBER",
-            "PRUEBA 5: LA MUERTE - UN TRAGO DE 5 SEGUNDOS"
+            "BEBE UN CHUPITO",
+            "INVITA A UN CHUPITO",
+            "CARA O CRUZ",
+            "ELIGE A 3 PARA BEBER",
+            "LA MUERTE - UN TRAGO DE 5 SEGUNDOS",
+            "SILENCIA A ALGUIEN 10 MINUTOS, SI HABLA, BEBE",
+            "TIRA LA RULETA"
         ];
         let secretChallengesMap = {}; // Guardará {numero: "Prueba X..."}
 
         function generateSecretChallenges() {
             secretChallengesMap = {};
             let nums = [];
-            // Elegimos 5 números aleatorios del 1 al 90
-            while(nums.length < 5) {
+            const numChallenges = challengeList.length;
+            // Elegimos números aleatorios del 1 al 90 (tantos como pruebas haya)
+            while(nums.length < numChallenges) {
                 let r = Math.floor(Math.random() * 90) + 1;
                 if(nums.indexOf(r) === -1) nums.push(r);
             }
             // Asignamos una prueba a cada número oculto
-            for(let i = 0; i < 5; i++) {
+            for(let i = 0; i < numChallenges; i++) {
                 secretChallengesMap[nums[i]] = challengeList[i];
             }
         }
@@ -549,7 +562,12 @@
                     // Pausa dramática pequeña y frase con entusiasmo
                     textToSpeak = `${num}... ¡${cantinelaPhrases[num]}!`;
                 } else {
-                    textToSpeak = `${num}`;
+                    // Si no tiene frase especial, deletrea los dígitos igual que en modo clásico
+                    if (numStr.length === 2) {
+                        textToSpeak = `${num}, , ${numStr[0]}, , ${numStr[1]}`;
+                    } else {
+                        textToSpeak = `${num}`;
+                    }
                 }
                 utterance.pitch = 1.4; // Tono más agudo y cómico
                 utterance.rate = 1.05; // Ritmo alegre y dinámico
@@ -597,11 +615,11 @@
                 
                 // Esperamos 1.5s para que le dé tiempo a cantar el número antes de saltar la alarma
                 setTimeout(() => {
-                    showChallengeModal(secretChallengesMap[number]);
+                    showChallengeModal(number, secretChallengesMap[number]);
                     
                     // Audio de la prueba
                     if ('speechSynthesis' in window) {
-                        let alertVoice = new SpeechSynthesisUtterance("¡Atención! Prueba oculta. " + secretChallengesMap[number]);
+                        let alertVoice = new SpeechSynthesisUtterance(`¡Atención! Prueba oculta en el número ${number}. Todo el que tenga el ${number}, que escuche: ${secretChallengesMap[number]}`);
                         alertVoice.lang = 'es-ES';
                         if (bestVoice) alertVoice.voice = bestVoice;
                         alertVoice.pitch = 1.2;
@@ -612,10 +630,23 @@
             }
         }
 
-        function showChallengeModal(text) {
+        function showChallengeModal(num, text) {
             const modal = document.getElementById('challenge-modal');
             const content = document.getElementById('challenge-modal-content');
+            document.getElementById('challenge-number-display').innerText = `Nº ${num}`;
             document.getElementById('challenge-text').innerText = text;
+            
+            const btnCumplir = document.getElementById('btn-cumplir');
+            const btnRuleta = document.getElementById('btn-ir-ruleta');
+
+            // Mostrar el botón de Ir a la Ruleta si la prueba es esa
+            if (text === "TIRA LA RULETA") {
+                btnCumplir.classList.add('hidden-view');
+                btnRuleta.classList.remove('hidden-view');
+            } else {
+                btnCumplir.classList.remove('hidden-view');
+                btnRuleta.classList.add('hidden-view');
+            }
             
             modal.classList.remove('hidden-view');
             setTimeout(() => {
@@ -625,7 +656,7 @@
             }, 10);
         }
 
-        function closeChallengeModal() {
+        function closeChallengeModal(resumeBingo = true) {
             const modal = document.getElementById('challenge-modal');
             const content = document.getElementById('challenge-modal-content');
             
@@ -635,8 +666,19 @@
             
             setTimeout(() => {
                 modal.classList.add('hidden-view');
+                // Auto-reanudar el bingo si se ha especificado (por defecto es true)
+                if (resumeBingo && availableNumbers.length > 0) {
+                    startBingoAuto();
+                }
             }, 500);
-            // Al cerrar la modal NO se reanuda automático, el presentador debe darle al botón PLAY.
+        }
+
+        function goToRouletteFromChallenge() {
+            closeChallengeModal(false); // Falso para que no se inicie el bingo en segundo plano
+            // Esperamos a que la animación de la alerta termine para hacer el cambio de pantalla limpio
+            setTimeout(() => {
+                switchView('sorteo');
+            }, 500);
         }
 
         function toggleBingoAuto() {
@@ -658,7 +700,12 @@
 
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
-                let welcomeText = isCantinelaMode ? "¡Atención! Arranca el bingo cantinela." : "Atención, comenzamos.";
+                let welcomeText = "Continuamos..."; // Si se reanuda a mitad, dice "Continuamos"
+                
+                if (drawnNumbers.length === 0) {
+                    welcomeText = isCantinelaMode ? "¡Atención! Arranca el bingo cantinela." : "Atención, comenzamos.";
+                }
+                
                 let initAudio = new SpeechSynthesisUtterance(welcomeText);
                 initAudio.lang = 'es-ES';
                 if (bestVoice) initAudio.voice = bestVoice;
