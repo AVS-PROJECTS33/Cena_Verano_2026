@@ -381,24 +381,29 @@
         
         // Cargar desde LocalStorage o usar por defecto
         let defaultCantinelaPhrases = {
+            2: "El casquet volador!",
             3: "Club Super3!",
             5: "La manita relajá, Manuel.",
+            13: "El gafe, hoy no sales.",
             15: "La niña bonita.",
             17: "La Loreee! Lore lore Macu Macu!",
             22: "Los dos patitos.",
             28: "El apagón.",
             29: "Pim pam, toma lacasitos!",
-            33: "Treinta y tres… no llego a fin de mes.",
+            33: "Y no llego a fin de mes!",
             39: "ESTEFANÍAAAAAAAAAA!",
             40: "El cuñao.",
             42: "LLUM, FOC, DESTRUCCIÓ!",
+            45: "Pausa para beber.",
             46: "Caca de color rosa!",
-            50: "El casquet volador!",
+            55: "Ese número estaba cantado.",
             58: "¡Se ha matao, Paco!",
+            65: "A ver si toca algo.",
             69: "No hace falta explicarlo perros.",
             74: "Yo por mi hija… MA-TO!",
             75: "Franco… se fue al quinto.",
-            81: "Cara anchoa."
+            81: "Cara anchoa.",
+            88: "Las gafas de la suegra"
         };
 
         let defaultChallengeList = [
@@ -411,8 +416,8 @@
             "TIRA LA RULETA"
         ];
 
-        // Fusionamos las frases por defecto con las que ya tenías guardadas en el navegador (usamos v2 para limpiar las viejas)
-        let storedPhrases = JSON.parse(localStorage.getItem('bingoPhrases_2026_v2'));
+        // Fusionamos las frases por defecto con las que ya tenías guardadas en el navegador (usamos v3 para limpiar las viejas)
+        let storedPhrases = JSON.parse(localStorage.getItem('bingoPhrases_2026_v3'));
         let cantinelaPhrases = storedPhrases ? { ...defaultCantinelaPhrases, ...storedPhrases } : { ...defaultCantinelaPhrases };
         let challengeList = JSON.parse(localStorage.getItem('bingoChallenges_2026')) || defaultChallengeList;
 
@@ -871,8 +876,8 @@
                 modal.classList.add('hidden-view');
             }, 300); 
             
-            // Guardamos al cerrar (usamos v2 para las frases)
-            localStorage.setItem('bingoPhrases_2026_v2', JSON.stringify(cantinelaPhrases));
+            // Guardamos al cerrar (usamos v3 para las frases)
+            localStorage.setItem('bingoPhrases_2026_v3', JSON.stringify(cantinelaPhrases));
             localStorage.setItem('bingoChallenges_2026', JSON.stringify(challengeList));
             
             // Actualizamos el juego si no está arrancado
