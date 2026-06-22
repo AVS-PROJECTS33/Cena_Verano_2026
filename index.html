@@ -508,16 +508,29 @@
         function loadBestVoices() {
             if (!('speechSynthesis' in window)) return;
             const voices = window.speechSynthesis.getVoices();
+            if (voices.length === 0) return; // Si aún no están cargadas, salimos y esperamos al evento
+
             spanishVoices = voices.filter(v => v.lang.startsWith('es'));
             
-            // Priorizamos voces de Google (muy naturales), Apple (Monica) o Microsoft que son menos robóticas
-            bestVoice = spanishVoices.find(v => v.name.includes('Google español') || v.name.includes('Google Spanish') || v.name.includes('Monica') || v.name.includes('Helena')) || spanishVoices[0];
+            // Buscamos específicamente las voces en la nube de Google (son ultra naturales)
+            const googleVoice = spanishVoices.find(v => v.name.includes('Google español') || v.name.includes('Google Spanish'));
+            
+            // Si no hay Google, buscamos voces premium locales de Windows/Mac
+            const premiumLocal = spanishVoices.find(v => v.name.includes('Monica') || v.name.includes('Helena') || v.name.includes('Laura'));
+            
+            bestVoice = googleVoice || premiumLocal || spanishVoices[0];
+            
+            console.log("Motor de voz cargado:", bestVoice ? bestVoice.name : "Por defecto");
         }
 
-        // El navegador a veces tarda un instante en cargar las voces
+        // Ejecutar carga de voces y escuchar cuando el navegador termine de descargarlas
         if ('speechSynthesis' in window) {
             window.speechSynthesis.onvoiceschanged = loadBestVoices;
+            // Intentar cargar por si ya estuvieran en caché
             loadBestVoices();
+            // Refrescar periódicamente durante los primeros segundos por si tardan
+            setTimeout(loadBestVoices, 500);
+            setTimeout(loadBestVoices, 2000);
         }
 
         function announceNumber(num) {
@@ -529,7 +542,7 @@
             let textToSpeak = "";
             let utterance = new SpeechSynthesisUtterance();
             utterance.lang = 'es-ES';
-            if (bestVoice) utterance.voice = bestVoice; // Usamos la voz premium si la hay
+            if (bestVoice) utterance.voice = bestVoice; // Forzamos la voz premium seleccionada
             
             if (isCantinelaMode) {
                 if (cantinelaPhrases[num]) {
