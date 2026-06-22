@@ -330,8 +330,8 @@
         <div class="bg-gray-900 border border-gray-700 rounded-2xl w-full max-w-4xl h-[85vh] flex flex-col p-6 shadow-2xl transform scale-90 transition-transform duration-300 relative" id="settings-content">
             
             <div class="flex justify-between items-center mb-4 border-b border-gray-700 pb-4">
-                <h2 class="text-3xl font-bold text-yellow-400 flex items-center gap-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" /></svg>
+                <h2 class="text-2xl font-bold text-yellow-400 flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.533 1.533 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" /></svg>
                     Ajustes de Juego
                 </h2>
                 <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-white bg-gray-800 p-2 rounded-full hover:bg-red-600 transition-colors">
@@ -341,38 +341,38 @@
 
             <!-- TABS -->
             <div class="flex gap-4 mb-4 border-b border-gray-700 pb-2">
-                <button onclick="switchSettingsTab('pruebas')" id="tab-pruebas" class="text-white font-bold pb-2 border-b-4 border-blue-500 text-xl px-4 transition-colors">Pruebas Ocultas</button>
-                <button onclick="switchSettingsTab('frases')" id="tab-frases" class="text-gray-500 font-bold pb-2 border-b-4 border-transparent hover:text-gray-300 text-xl px-4 transition-colors">Frases Cantinela</button>
+                <button onclick="switchSettingsTab('pruebas')" id="tab-pruebas" class="text-white font-bold pb-2 border-b-4 border-blue-500 text-lg px-4 transition-colors">Pruebas Ocultas</button>
+                <button onclick="switchSettingsTab('frases')" id="tab-frases" class="text-gray-500 font-bold pb-2 border-b-4 border-transparent hover:text-gray-300 text-lg px-4 transition-colors">Frases Cantinela</button>
             </div>
 
             <!-- CONTENIDO: PRUEBAS OCULTAS -->
             <div id="settings-pruebas" class="flex-1 overflow-y-auto pr-2 flex flex-col">
-                <p class="text-gray-400 mb-4">Añade o quita pruebas. El juego esconderá automáticamente en el cartón tantas pruebas como tengas en esta lista al iniciar cada partida.</p>
-                <div id="settings-pruebas-list" class="space-y-3 flex-1 overflow-y-auto mb-4 bg-black/30 p-4 rounded-xl border border-gray-800">
+                <p class="text-gray-400 text-sm mb-3">Añade o quita pruebas. El juego esconderá automáticamente en el cartón tantas pruebas como tengas en esta lista al iniciar cada partida.</p>
+                <div id="settings-pruebas-list" class="space-y-2 flex-1 overflow-y-auto mb-4 bg-black/30 p-3 rounded-xl border border-gray-800">
                     <!-- JS rellena esto -->
                 </div>
                 <div class="flex gap-2 mt-auto">
-                    <input type="text" id="new-prueba-input" class="flex-1 bg-gray-800 text-white p-4 rounded-xl border border-gray-600 focus:border-blue-500 focus:outline-none" placeholder="Escribe una nueva prueba (Ej: Baila la Macarena)">
-                    <button onclick="addSettingsPrueba()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-xl transition-colors">Añadir</button>
+                    <input type="text" id="new-prueba-input" class="flex-1 bg-gray-800 text-white p-3 rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none text-sm" placeholder="Escribe una nueva prueba (Ej: Baila la Macarena)">
+                    <button onclick="addSettingsPrueba()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg transition-colors text-sm">Añadir</button>
                 </div>
             </div>
 
             <!-- CONTENIDO: FRASES CANTINELA -->
             <div id="settings-frases" class="flex-1 overflow-y-auto pr-2 flex flex-col hidden-view">
-                <p class="text-gray-400 mb-4">Edita los números especiales del Modo Cantinela. Usa el botón del altavoz para escuchar cómo lo dirá el presentador.</p>
-                <div id="settings-frases-list" class="space-y-3 flex-1 overflow-y-auto mb-4 bg-black/30 p-4 rounded-xl border border-gray-800">
+                <p class="text-gray-400 text-sm mb-3">Edita los números especiales del Modo Cantinela. Usa el botón del altavoz para escuchar cómo lo dirá el presentador.</p>
+                <!-- Usamos CSS Grid para que las frases se agrupen en 2 columnas y ocupen menos espacio -->
+                <div id="settings-frases-list" class="grid grid-cols-1 md:grid-cols-2 gap-2 flex-1 overflow-y-auto mb-4 bg-black/30 p-3 rounded-xl border border-gray-800 content-start">
                     <!-- JS rellena esto -->
                 </div>
                 <div class="flex gap-2 mt-auto">
-                    <input type="number" id="new-frase-num" min="1" max="90" class="w-24 bg-gray-800 text-white p-4 rounded-xl border border-gray-600 focus:border-blue-500 focus:outline-none text-center font-bold" placeholder="Nº">
-                    <input type="text" id="new-frase-text" class="flex-1 bg-gray-800 text-white p-4 rounded-xl border border-gray-600 focus:border-blue-500 focus:outline-none" placeholder="Escribe la rima o frase para el número...">
-                    <button onclick="addSettingsFrase()" class="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-xl transition-colors">Guardar</button>
+                    <input type="number" id="new-frase-num" min="1" max="90" class="w-16 bg-gray-800 text-white p-3 rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none text-center font-bold text-sm" placeholder="Nº">
+                    <input type="text" id="new-frase-text" class="flex-1 bg-gray-800 text-white p-3 rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none text-sm" placeholder="Escribe la rima o frase para el número...">
+                    <button onclick="addSettingsFrase()" class="bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-6 rounded-lg transition-colors text-sm">Guardar</button>
                 </div>
             </div>
 
         </div>
     </div>
-
 
     <script>
         // ==========================================
@@ -386,12 +386,19 @@
             15: "La niña bonita.",
             17: "La Loreee! Lore lore Macu Macu!",
             22: "Los dos patitos.",
+            28: "El apagón.",
             29: "Pim pam, toma lacasitos!",
             33: "Treinta y tres… no llego a fin de mes.",
             39: "ESTEFANÍAAAAAAAAAA!",
+            40: "El cuñao.",
+            42: "LLUM, FOC, DESTRUCCIÓ!",
+            46: "Caca de color rosa!",
+            50: "El casquet volador!",
+            58: "¡Se ha matao, Paco!",
             69: "No hace falta explicarlo perros.",
             74: "Yo por mi hija… MA-TO!",
-            75: "Franco… se fue al quinto."
+            75: "Franco… se fue al quinto.",
+            81: "Cara anchoa."
         };
 
         let defaultChallengeList = [
@@ -404,7 +411,9 @@
             "TIRA LA RULETA"
         ];
 
-        let cantinelaPhrases = JSON.parse(localStorage.getItem('bingoPhrases_2026')) || defaultCantinelaPhrases;
+        // Fusionamos las frases por defecto con las que ya tenías guardadas en el navegador
+        let storedPhrases = JSON.parse(localStorage.getItem('bingoPhrases_2026'));
+        let cantinelaPhrases = storedPhrases ? { ...defaultCantinelaPhrases, ...storedPhrases } : { ...defaultCantinelaPhrases };
         let challengeList = JSON.parse(localStorage.getItem('bingoChallenges_2026')) || defaultChallengeList;
 
 
@@ -879,13 +888,13 @@
             const divFrases = document.getElementById('settings-frases');
 
             if (tab === 'pruebas') {
-                btnPruebas.className = "text-white font-bold pb-2 border-b-4 border-blue-500 text-xl px-4 transition-colors";
-                btnFrases.className = "text-gray-500 font-bold pb-2 border-b-4 border-transparent hover:text-gray-300 text-xl px-4 transition-colors";
+                btnPruebas.className = "text-white font-bold pb-2 border-b-4 border-blue-500 text-lg px-4 transition-colors";
+                btnFrases.className = "text-gray-500 font-bold pb-2 border-b-4 border-transparent hover:text-gray-300 text-lg px-4 transition-colors";
                 divPruebas.classList.remove('hidden-view');
                 divFrases.classList.add('hidden-view');
             } else {
-                btnFrases.className = "text-white font-bold pb-2 border-b-4 border-blue-500 text-xl px-4 transition-colors";
-                btnPruebas.className = "text-gray-500 font-bold pb-2 border-b-4 border-transparent hover:text-gray-300 text-xl px-4 transition-colors";
+                btnFrases.className = "text-white font-bold pb-2 border-b-4 border-blue-500 text-lg px-4 transition-colors";
+                btnPruebas.className = "text-gray-500 font-bold pb-2 border-b-4 border-transparent hover:text-gray-300 text-lg px-4 transition-colors";
                 divFrases.classList.remove('hidden-view');
                 divPruebas.classList.add('hidden-view');
             }
@@ -896,16 +905,16 @@
             const container = document.getElementById('settings-pruebas-list');
             container.innerHTML = '';
             if (challengeList.length === 0) {
-                container.innerHTML = '<p class="text-gray-500 text-center py-4">No hay pruebas ocultas.</p>';
+                container.innerHTML = '<p class="text-gray-500 text-center py-4 text-sm">No hay pruebas ocultas.</p>';
                 return;
             }
             challengeList.forEach((prueba, index) => {
                 const div = document.createElement('div');
-                div.className = "flex justify-between items-center bg-gray-800 p-4 rounded-xl border border-gray-700 shadow-sm";
+                div.className = "flex justify-between items-center bg-gray-800 p-3 rounded-lg border border-gray-700 shadow-sm";
                 div.innerHTML = `
-                    <span class="font-bold text-gray-200 text-lg">${prueba}</span>
-                    <button onclick="deleteSettingsPrueba(${index})" class="text-gray-400 hover:text-red-500 p-2 hover:bg-gray-700 rounded-lg transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    <span class="font-semibold text-gray-200 text-sm">${prueba}</span>
+                    <button onclick="deleteSettingsPrueba(${index})" class="text-gray-400 hover:text-red-500 p-1.5 hover:bg-gray-700 rounded-md transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                     </button>
                 `;
                 container.appendChild(div);
@@ -934,25 +943,28 @@
             
             const nums = Object.keys(cantinelaPhrases).sort((a,b) => a - b);
             if (nums.length === 0) {
-                container.innerHTML = '<p class="text-gray-500 text-center py-4">No hay frases guardadas.</p>';
+                container.innerHTML = '<p class="text-gray-500 text-center py-4 col-span-2 text-sm">No hay frases guardadas.</p>';
                 return;
             }
 
             nums.forEach(num => {
                 const phrase = cantinelaPhrases[num];
                 const div = document.createElement('div');
-                div.className = "flex justify-between items-center bg-gray-800 p-3 rounded-xl border border-gray-700 shadow-sm gap-4";
+                div.className = "flex justify-between items-center bg-gray-800 p-2 rounded-lg border border-gray-700 shadow-sm gap-2";
                 div.innerHTML = `
-                    <div class="flex items-center gap-4 flex-1 overflow-hidden">
-                        <span class="bg-yellow-500 text-black font-black text-xl px-4 py-2 rounded-lg shrink-0">${num}</span>
-                        <span class="font-bold text-gray-200 text-lg truncate">${phrase}</span>
+                    <div class="flex items-center gap-3 flex-1 overflow-hidden">
+                        <span class="bg-yellow-500 text-black font-black text-sm px-2 py-1 rounded-md shrink-0 w-8 text-center">${num}</span>
+                        <span class="font-medium text-gray-200 text-sm truncate" title="${phrase.replace(/"/g, '&quot;')}">${phrase}</span>
                     </div>
-                    <div class="flex gap-2 shrink-0">
-                        <button onclick="testVoicePhrase('${num}', '${phrase.replace(/'/g, "\\'")}')" title="Escuchar Frase" class="text-blue-400 hover:text-white bg-blue-900/30 hover:bg-blue-600 p-3 rounded-lg transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
+                    <div class="flex gap-1 shrink-0">
+                        <button onclick="testVoicePhrase('${num}', '${phrase.replace(/'/g, "\\'")}')" title="Escuchar Frase" class="text-blue-400 hover:text-white bg-blue-900/30 hover:bg-blue-600 p-1.5 rounded-md transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
                         </button>
-                        <button onclick="deleteSettingsFrase(${num})" title="Eliminar Frase" class="text-gray-400 hover:text-red-500 hover:bg-gray-700 p-3 rounded-lg transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        <button onclick="editSettingsFrase('${num}')" title="Editar Frase" class="text-green-400 hover:text-white bg-green-900/30 hover:bg-green-600 p-1.5 rounded-md transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                        </button>
+                        <button onclick="deleteSettingsFrase(${num})" title="Eliminar Frase" class="text-gray-400 hover:text-red-500 hover:bg-gray-700 p-1.5 rounded-md transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                         </button>
                     </div>
                 `;
@@ -962,6 +974,16 @@
 
         function testVoicePhrase(num, text) {
             triggerSpeech(`${num}... ¡${text}!`, 1.4, 1.05);
+        }
+
+        function editSettingsFrase(num) {
+            const inputNum = document.getElementById('new-frase-num');
+            const inputText = document.getElementById('new-frase-text');
+            
+            inputNum.value = num;
+            inputText.value = cantinelaPhrases[num];
+            
+            inputText.focus();
         }
 
         function addSettingsFrase() {
