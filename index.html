@@ -169,7 +169,7 @@
 <body id="main-body" class="flex flex-col h-screen bg-bingo">
 
     <!-- Header / Navbar -->
-    <header class="bg-gray-900/30 backdrop-blur-md border-b border-gray-800/30 p-4 flex justify-between items-center shadow-lg h-[10vh] relative z-20">
+    <header id="main-header" class="bg-gray-900/30 backdrop-blur-md border-b border-gray-800/30 p-4 flex justify-between items-center shadow-lg h-[10vh] relative z-20 transition-opacity duration-300">
         <div class="text-2xl font-black tracking-wider flex items-center gap-3 text-yellow-400 bg-black/40 px-4 py-2 rounded-xl backdrop-blur-sm">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -245,7 +245,7 @@
     <!-- CONTENEDOR SORTEO (RULETA) -->
     <main id="view-sorteo" class="flex flex-1 h-[90vh] hidden-view bg-transparent relative z-10">
         
-        <div class="w-1/4 bg-gray-800/30 backdrop-blur-md border-r border-gray-700/40 p-6 flex flex-col relative h-full">
+        <div id="sorteo-sidebar" class="w-1/4 bg-gray-800/30 backdrop-blur-md border-r border-gray-700/40 p-6 flex flex-col relative h-full transition-opacity duration-300">
             
             <div id="view-list-manager" class="flex-1 flex flex-col h-full min-h-0">
                 <h2 class="text-2xl font-bold mb-4 text-yellow-400 bg-black/40 inline-block px-4 py-1 rounded-lg backdrop-blur-sm w-fit">Mis Listas</h2>
@@ -282,8 +282,7 @@
 
         </div>
 
-        <div class="w-3/4 flex flex-col items-center justify-center relative p-8 bg-gray-900/10 backdrop-blur-sm">
-            <h3 id="current-list-title" class="absolute top-8 left-8 text-3xl font-black text-yellow-400 tracking-wider bg-black/50 px-6 py-2 rounded-2xl backdrop-blur-md border border-gray-700/50 shadow-xl"></h3>
+        <div id="sorteo-main-area" class="w-3/4 flex flex-col items-center justify-center relative p-8 bg-gray-900/10 backdrop-blur-sm transition-all duration-500">
             
             <div id="roulette-container">
                 <div class="pointer"></div>
@@ -1321,6 +1320,11 @@
             
             isSpinning = true;
             document.getElementById('spin-btn').disabled = true;
+
+            // MODO CINE: Ocultar barra superior y menú lateral
+            document.getElementById('main-header').classList.add('hidden-view');
+            document.getElementById('sorteo-sidebar').classList.add('hidden-view');
+            document.getElementById('sorteo-main-area').classList.replace('w-3/4', 'w-full');
             
             // Reproducir la música de la ruleta girando
             audioWin.pause();
@@ -1452,6 +1456,11 @@
             modal.classList.add('opacity-0');
             content.classList.remove('scale-100');
             content.classList.add('scale-90');
+
+            // MODO CINE: Restaurar barra superior y menú lateral
+            document.getElementById('main-header').classList.remove('hidden-view');
+            document.getElementById('sorteo-sidebar').classList.remove('hidden-view');
+            document.getElementById('sorteo-main-area').classList.replace('w-full', 'w-3/4');
             
             setTimeout(() => {
                 modal.classList.add('hidden-view');
