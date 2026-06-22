@@ -176,6 +176,10 @@
             CENA VERANO 2026
         </div>
         <div class="flex gap-4">
+            <button onclick="openSettingsModal()" class="px-4 py-2 rounded-full font-bold transition-colors bg-gray-800 border border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white flex items-center gap-2 shadow-md">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" /></svg>
+                Ajustes
+            </button>
             <button onclick="switchView('bingo')" id="tab-bingo" class="px-6 py-2 rounded-full font-bold transition-colors bg-blue-600/90 text-white hover:bg-blue-500 shadow-md">
                 Jugar al Bingo
             </button>
@@ -321,12 +325,98 @@
         </div>
     </div>
 
+    <!-- MODAL DE AJUSTES -->
+    <div id="settings-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 hidden-view opacity-0 transition-opacity duration-300">
+        <div class="bg-gray-900 border border-gray-700 rounded-2xl w-full max-w-4xl h-[85vh] flex flex-col p-6 shadow-2xl transform scale-90 transition-transform duration-300 relative" id="settings-content">
+            
+            <div class="flex justify-between items-center mb-4 border-b border-gray-700 pb-4">
+                <h2 class="text-3xl font-bold text-yellow-400 flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" /></svg>
+                    Ajustes de Juego
+                </h2>
+                <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-white bg-gray-800 p-2 rounded-full hover:bg-red-600 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+
+            <!-- TABS -->
+            <div class="flex gap-4 mb-4 border-b border-gray-700 pb-2">
+                <button onclick="switchSettingsTab('pruebas')" id="tab-pruebas" class="text-white font-bold pb-2 border-b-4 border-blue-500 text-xl px-4 transition-colors">Pruebas Ocultas</button>
+                <button onclick="switchSettingsTab('frases')" id="tab-frases" class="text-gray-500 font-bold pb-2 border-b-4 border-transparent hover:text-gray-300 text-xl px-4 transition-colors">Frases Cantinela</button>
+            </div>
+
+            <!-- CONTENIDO: PRUEBAS OCULTAS -->
+            <div id="settings-pruebas" class="flex-1 overflow-y-auto pr-2 flex flex-col">
+                <p class="text-gray-400 mb-4">Añade o quita pruebas. El juego esconderá automáticamente en el cartón tantas pruebas como tengas en esta lista al iniciar cada partida.</p>
+                <div id="settings-pruebas-list" class="space-y-3 flex-1 overflow-y-auto mb-4 bg-black/30 p-4 rounded-xl border border-gray-800">
+                    <!-- JS rellena esto -->
+                </div>
+                <div class="flex gap-2 mt-auto">
+                    <input type="text" id="new-prueba-input" class="flex-1 bg-gray-800 text-white p-4 rounded-xl border border-gray-600 focus:border-blue-500 focus:outline-none" placeholder="Escribe una nueva prueba (Ej: Baila la Macarena)">
+                    <button onclick="addSettingsPrueba()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-xl transition-colors">Añadir</button>
+                </div>
+            </div>
+
+            <!-- CONTENIDO: FRASES CANTINELA -->
+            <div id="settings-frases" class="flex-1 overflow-y-auto pr-2 flex flex-col hidden-view">
+                <p class="text-gray-400 mb-4">Edita los números especiales del Modo Cantinela. Usa el botón del altavoz para escuchar cómo lo dirá el presentador.</p>
+                <div id="settings-frases-list" class="space-y-3 flex-1 overflow-y-auto mb-4 bg-black/30 p-4 rounded-xl border border-gray-800">
+                    <!-- JS rellena esto -->
+                </div>
+                <div class="flex gap-2 mt-auto">
+                    <input type="number" id="new-frase-num" min="1" max="90" class="w-24 bg-gray-800 text-white p-4 rounded-xl border border-gray-600 focus:border-blue-500 focus:outline-none text-center font-bold" placeholder="Nº">
+                    <input type="text" id="new-frase-text" class="flex-1 bg-gray-800 text-white p-4 rounded-xl border border-gray-600 focus:border-blue-500 focus:outline-none" placeholder="Escribe la rima o frase para el número...">
+                    <button onclick="addSettingsFrase()" class="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-xl transition-colors">Guardar</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
     <script>
+        // ==========================================
+        // VARIABLES GLOBALES DE AJUSTES (Pruebas y Frases)
+        // ==========================================
+        
+        // Cargar desde LocalStorage o usar por defecto
+        let defaultCantinelaPhrases = {
+            3: "Club Super3!",
+            5: "La manita relajá, Manuel.",
+            15: "La niña bonita.",
+            17: "La Loreee! Lore lore Macu Macu!",
+            22: "Los dos patitos.",
+            29: "Pim pam, toma lacasitos!",
+            33: "Treinta y tres… no llego a fin de mes.",
+            39: "ESTEFANÍAAAAAAAAAA!",
+            69: "No hace falta explicarlo perros.",
+            74: "Yo por mi hija… MA-TO!",
+            75: "Franco… se fue al quinto."
+        };
+
+        let defaultChallengeList = [
+            "BEBE UN CHUPITO",
+            "INVITA A UN CHUPITO",
+            "CARA O CRUZ",
+            "ELIGE A 3 PARA BEBER",
+            "LA MUERTE - UN TRAGO DE 5 SEGUNDOS",
+            "SILENCIA A ALGUIEN 10 MINUTOS, SI HABLA, BEBE",
+            "TIRA LA RULETA"
+        ];
+
+        let cantinelaPhrases = JSON.parse(localStorage.getItem('bingoPhrases_2026')) || defaultCantinelaPhrases;
+        let challengeList = JSON.parse(localStorage.getItem('bingoChallenges_2026')) || defaultChallengeList;
+
+
         // ==========================================
         // SOPORTE PARA BOTÓN FÍSICO USB (y Teclado)
         // ==========================================
         document.addEventListener('keydown', (event) => {
             if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
+
+            // IGNORAR SI EL MODAL DE AJUSTES ESTÁ ABIERTO
+            const settingsModal = document.getElementById('settings-modal');
+            if (!settingsModal.classList.contains('hidden-view')) return; 
 
             if (event.code === 'Space' || event.code === 'Enter') {
                 if (event.code === 'Space') event.preventDefault(); 
@@ -413,49 +503,28 @@
         let resetTimeout = null;
 
         let isCantinelaMode = false;
-        const cantinelaPhrases = {
-            3: "Club Super3!",
-            5: "La manita relajá, Manuel.",
-            15: "La niña bonita.",
-            17: "La Loreee! Lore lore Macu Macu!",
-            22: "Los dos patitos.",
-            29: "Pim pam, toma lacasitos!",
-            33: "Treinta y tres… no llego a fin de mes.",
-            39: "ESTEFANÍAAAAAAAAAA!",
-            69: "No hace falta explicarlo perros.",
-            74: "Yo por mi hija… MA-TO!",
-            75: "Franco… se fue al quinto."
-        };
-
-        // --- SISTEMA DE PRUEBAS OCULTAS ---
-        const challengeList = [
-            "BEBE UN CHUPITO",
-            "INVITA A UN CHUPITO",
-            "CARA O CRUZ",
-            "ELIGE A 3 PARA BEBER",
-            "LA MUERTE - UN TRAGO DE 5 SEGUNDOS",
-            "SILENCIA A ALGUIEN 10 MINUTOS, SI HABLA, BEBE",
-            "TIRA LA RULETA"
-        ];
-        let secretChallengesMap = {}; // Guardará {numero: "Prueba X..."}
+        
+        let secretChallengesMap = {}; 
 
         function generateSecretChallenges() {
             secretChallengesMap = {};
             let nums = [];
-            const numChallenges = challengeList.length;
-            // Elegimos números aleatorios del 1 al 90 (tantos como pruebas haya)
+            const numChallenges = Math.min(challengeList.length, 90); // Máximo 90 por si acaso
+            
+            if (numChallenges === 0) return; // Si no hay pruebas, salimos
+            
             while(nums.length < numChallenges) {
                 let r = Math.floor(Math.random() * 90) + 1;
                 if(nums.indexOf(r) === -1) nums.push(r);
             }
-            // Asignamos una prueba a cada número oculto
+            
             for(let i = 0; i < numChallenges; i++) {
                 secretChallengesMap[nums[i]] = challengeList[i];
             }
         }
 
         function toggleBingoMode() {
-            if (isPlaying || drawnNumbers.length > 0) return; // No se puede cambiar a media partida
+            if (isPlaying || drawnNumbers.length > 0) return; 
 
             isCantinelaMode = !isCantinelaMode;
             const textEl = document.getElementById('modeToggleText');
@@ -500,10 +569,8 @@
                 }
             }
             
-            // Generar nuevas pruebas aleatorias para la partida
             generateSecretChallenges();
 
-            // Rehabilitar cambio de modo al reiniciar
             document.getElementById('modeToggleBtn').disabled = false;
             document.getElementById('modeToggleBtn').classList.remove('opacity-50', 'cursor-not-allowed');
 
@@ -512,77 +579,72 @@
         }
 
         // ==========================================
-        // FUNCIÓN DE AUDIO MEJORADA (Voces Naturales)
+        // FUNCIÓN DE AUDIO MEJORADA
         // ==========================================
         let spanishVoices = [];
         let bestVoice = null;
 
-        // Esta función busca las mejores voces instaladas en el PC/Navegador
         function loadBestVoices() {
             if (!('speechSynthesis' in window)) return;
             const voices = window.speechSynthesis.getVoices();
-            if (voices.length === 0) return; // Si aún no están cargadas, salimos y esperamos al evento
+            if (voices.length === 0) return; 
 
             spanishVoices = voices.filter(v => v.lang.startsWith('es'));
             
-            // Buscamos específicamente las voces en la nube de Google (son ultra naturales)
             const googleVoice = spanishVoices.find(v => v.name.includes('Google español') || v.name.includes('Google Spanish'));
-            
-            // Si no hay Google, buscamos voces premium locales de Windows/Mac
             const premiumLocal = spanishVoices.find(v => v.name.includes('Monica') || v.name.includes('Helena') || v.name.includes('Laura'));
             
             bestVoice = googleVoice || premiumLocal || spanishVoices[0];
-            
-            console.log("Motor de voz cargado:", bestVoice ? bestVoice.name : "Por defecto");
         }
 
-        // Ejecutar carga de voces y escuchar cuando el navegador termine de descargarlas
         if ('speechSynthesis' in window) {
             window.speechSynthesis.onvoiceschanged = loadBestVoices;
-            // Intentar cargar por si ya estuvieran en caché
             loadBestVoices();
-            // Refrescar periódicamente durante los primeros segundos por si tardan
             setTimeout(loadBestVoices, 500);
             setTimeout(loadBestVoices, 2000);
         }
 
-        function announceNumber(num) {
+        // Función reutilizable para hablar (usada por el bingo y por los ajustes)
+        function triggerSpeech(text, pitch, rate) {
             if (!('speechSynthesis' in window)) return;
-            
             window.speechSynthesis.cancel(); 
-            
+            let utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'es-ES';
+            if (bestVoice) utterance.voice = bestVoice;
+            utterance.pitch = pitch || 1.0;
+            utterance.rate = rate || 1.0;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function announceNumber(num) {
             let numStr = num.toString();
             let textToSpeak = "";
-            let utterance = new SpeechSynthesisUtterance();
-            utterance.lang = 'es-ES';
-            if (bestVoice) utterance.voice = bestVoice; // Forzamos la voz premium seleccionada
+            let finalPitch = 1.0;
+            let finalRate = 0.85;
             
             if (isCantinelaMode) {
                 if (cantinelaPhrases[num]) {
-                    // Pausa dramática pequeña y frase con entusiasmo
                     textToSpeak = `${num}... ¡${cantinelaPhrases[num]}!`;
                 } else {
-                    // Si no tiene frase especial, deletrea los dígitos igual que en modo clásico
                     if (numStr.length === 2) {
                         textToSpeak = `${num}, , ${numStr[0]}, , ${numStr[1]}`;
                     } else {
                         textToSpeak = `${num}`;
                     }
                 }
-                utterance.pitch = 1.4; // Tono más agudo y cómico
-                utterance.rate = 1.05; // Ritmo alegre y dinámico
+                finalPitch = 1.4; 
+                finalRate = 1.05; 
             } else {
                 if (numStr.length === 2) {
                     textToSpeak = `${num}, , ${numStr[0]}, , ${numStr[1]}`;
                 } else {
                     textToSpeak = `${num}`;
                 }
-                utterance.pitch = 1.0; // Tono serio normal
-                utterance.rate = 0.85; // Ritmo pausado y solemne
+                finalPitch = 1.0; 
+                finalRate = 0.85; 
             }
             
-            utterance.text = textToSpeak;
-            window.speechSynthesis.speak(utterance);
+            triggerSpeech(textToSpeak, finalPitch, finalRate);
         }
 
         function drawSingleNumber() {
@@ -609,23 +671,12 @@
             
             announceNumber(number); 
 
-            // Verificar si es un número trampa en Modo Cantinela
             if (isCantinelaMode && secretChallengesMap[number]) {
                 stopBingoAuto();
                 
-                // Esperamos 1.5s para que le dé tiempo a cantar el número antes de saltar la alarma
                 setTimeout(() => {
                     showChallengeModal(number, secretChallengesMap[number]);
-                    
-                    // Audio de la prueba
-                    if ('speechSynthesis' in window) {
-                        let alertVoice = new SpeechSynthesisUtterance(`¡Atención! Prueba oculta en el número ${number}. Todo el que tenga el ${number}, que escuche: ${secretChallengesMap[number]}`);
-                        alertVoice.lang = 'es-ES';
-                        if (bestVoice) alertVoice.voice = bestVoice;
-                        alertVoice.pitch = 1.2;
-                        alertVoice.rate = 1.0;
-                        window.speechSynthesis.speak(alertVoice);
-                    }
+                    triggerSpeech(`¡Atención! Prueba oculta en el número ${number}. Todo el que tenga el ${number}, que escuche: ${secretChallengesMap[number]}`, 1.2, 1.0);
                 }, 1500);
             }
         }
@@ -639,7 +690,6 @@
             const btnCumplir = document.getElementById('btn-cumplir');
             const btnRuleta = document.getElementById('btn-ir-ruleta');
 
-            // Mostrar el botón de Ir a la Ruleta si la prueba es esa
             if (text === "TIRA LA RULETA") {
                 btnCumplir.classList.add('hidden-view');
                 btnRuleta.classList.remove('hidden-view');
@@ -666,7 +716,6 @@
             
             setTimeout(() => {
                 modal.classList.add('hidden-view');
-                // Auto-reanudar el bingo si se ha especificado (por defecto es true)
                 if (resumeBingo && availableNumbers.length > 0) {
                     startBingoAuto();
                 }
@@ -674,8 +723,7 @@
         }
 
         function goToRouletteFromChallenge() {
-            closeChallengeModal(false); // Falso para que no se inicie el bingo en segundo plano
-            // Esperamos a que la animación de la alerta termine para hacer el cambio de pantalla limpio
+            closeChallengeModal(false); 
             setTimeout(() => {
                 switchView('sorteo');
             }, 500);
@@ -692,30 +740,22 @@
         function startBingoAuto() {
             if (availableNumbers.length === 0) return;
             
+            // FIX: Limpiamos por completo los intervalos por si se le da doble clic al botón
+            clearInterval(bingoInterval);
+            clearInterval(countdownInterval);
+            
             isPlaying = true;
             
-            // Bloquear el botón de cambiar modo cuando se empieza a jugar
             document.getElementById('modeToggleBtn').disabled = true;
             document.getElementById('modeToggleBtn').classList.add('opacity-50', 'cursor-not-allowed');
 
             if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                let welcomeText = "Continuamos..."; // Si se reanuda a mitad, dice "Continuamos"
-                
+                let welcomeText = "Continuamos..."; 
                 if (drawnNumbers.length === 0) {
                     welcomeText = isCantinelaMode ? "¡Atención! Arranca el bingo cantinela." : "Atención, comenzamos.";
                 }
                 
-                let initAudio = new SpeechSynthesisUtterance(welcomeText);
-                initAudio.lang = 'es-ES';
-                if (bestVoice) initAudio.voice = bestVoice;
-                if (isCantinelaMode) {
-                    initAudio.pitch = 1.4;
-                    initAudio.rate = 1.05;
-                } else {
-                    initAudio.pitch = 1.0;
-                }
-                window.speechSynthesis.speak(initAudio);
+                triggerSpeech(welcomeText, isCantinelaMode ? 1.4 : 1.0, isCantinelaMode ? 1.05 : 1.0);
             }
             
             document.getElementById('toggleBingoBtn').className = "w-full bg-yellow-600/90 hover:bg-yellow-500 text-white font-bold py-5 px-4 rounded-2xl text-2xl shadow-lg transition-transform transform active:scale-95 flex justify-center items-center gap-3 backdrop-blur-sm";
@@ -791,6 +831,157 @@
             btn.className = "w-3/4 bg-red-600/90 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-xl text-lg shadow-lg transition-colors flex items-center justify-center gap-2 backdrop-blur-sm border border-red-500/50";
         }
 
+
+        // ==========================================
+        // LÓGICA DE LOS AJUSTES (MODAL)
+        // ==========================================
+        function openSettingsModal() {
+            const modal = document.getElementById('settings-modal');
+            const content = document.getElementById('settings-content');
+            
+            renderSettingsPruebas();
+            renderSettingsFrases();
+            
+            modal.classList.remove('hidden-view');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-90');
+                content.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeSettingsModal() {
+            const modal = document.getElementById('settings-modal');
+            const content = document.getElementById('settings-content');
+            
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-90');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden-view');
+            }, 300); 
+            
+            // Guardamos al cerrar
+            localStorage.setItem('bingoPhrases_2026', JSON.stringify(cantinelaPhrases));
+            localStorage.setItem('bingoChallenges_2026', JSON.stringify(challengeList));
+            
+            // Actualizamos el juego si no está arrancado
+            if (!isPlaying && drawnNumbers.length === 0) {
+                generateSecretChallenges();
+            }
+        }
+
+        function switchSettingsTab(tab) {
+            const btnPruebas = document.getElementById('tab-pruebas');
+            const btnFrases = document.getElementById('tab-frases');
+            const divPruebas = document.getElementById('settings-pruebas');
+            const divFrases = document.getElementById('settings-frases');
+
+            if (tab === 'pruebas') {
+                btnPruebas.className = "text-white font-bold pb-2 border-b-4 border-blue-500 text-xl px-4 transition-colors";
+                btnFrases.className = "text-gray-500 font-bold pb-2 border-b-4 border-transparent hover:text-gray-300 text-xl px-4 transition-colors";
+                divPruebas.classList.remove('hidden-view');
+                divFrases.classList.add('hidden-view');
+            } else {
+                btnFrases.className = "text-white font-bold pb-2 border-b-4 border-blue-500 text-xl px-4 transition-colors";
+                btnPruebas.className = "text-gray-500 font-bold pb-2 border-b-4 border-transparent hover:text-gray-300 text-xl px-4 transition-colors";
+                divFrases.classList.remove('hidden-view');
+                divPruebas.classList.add('hidden-view');
+            }
+        }
+
+        // --- GESTIÓN PRUEBAS ---
+        function renderSettingsPruebas() {
+            const container = document.getElementById('settings-pruebas-list');
+            container.innerHTML = '';
+            if (challengeList.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-4">No hay pruebas ocultas.</p>';
+                return;
+            }
+            challengeList.forEach((prueba, index) => {
+                const div = document.createElement('div');
+                div.className = "flex justify-between items-center bg-gray-800 p-4 rounded-xl border border-gray-700 shadow-sm";
+                div.innerHTML = `
+                    <span class="font-bold text-gray-200 text-lg">${prueba}</span>
+                    <button onclick="deleteSettingsPrueba(${index})" class="text-gray-400 hover:text-red-500 p-2 hover:bg-gray-700 rounded-lg transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addSettingsPrueba() {
+            const input = document.getElementById('new-prueba-input');
+            const text = input.value.trim().toUpperCase();
+            if (text) {
+                challengeList.push(text);
+                input.value = '';
+                renderSettingsPruebas();
+            }
+        }
+
+        function deleteSettingsPrueba(index) {
+            challengeList.splice(index, 1);
+            renderSettingsPruebas();
+        }
+
+        // --- GESTIÓN FRASES CANTINELA ---
+        function renderSettingsFrases() {
+            const container = document.getElementById('settings-frases-list');
+            container.innerHTML = '';
+            
+            const nums = Object.keys(cantinelaPhrases).sort((a,b) => a - b);
+            if (nums.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-4">No hay frases guardadas.</p>';
+                return;
+            }
+
+            nums.forEach(num => {
+                const phrase = cantinelaPhrases[num];
+                const div = document.createElement('div');
+                div.className = "flex justify-between items-center bg-gray-800 p-3 rounded-xl border border-gray-700 shadow-sm gap-4";
+                div.innerHTML = `
+                    <div class="flex items-center gap-4 flex-1 overflow-hidden">
+                        <span class="bg-yellow-500 text-black font-black text-xl px-4 py-2 rounded-lg shrink-0">${num}</span>
+                        <span class="font-bold text-gray-200 text-lg truncate">${phrase}</span>
+                    </div>
+                    <div class="flex gap-2 shrink-0">
+                        <button onclick="testVoicePhrase('${num}', '${phrase.replace(/'/g, "\\'")}')" title="Escuchar Frase" class="text-blue-400 hover:text-white bg-blue-900/30 hover:bg-blue-600 p-3 rounded-lg transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
+                        </button>
+                        <button onclick="deleteSettingsFrase(${num})" title="Eliminar Frase" class="text-gray-400 hover:text-red-500 hover:bg-gray-700 p-3 rounded-lg transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function testVoicePhrase(num, text) {
+            triggerSpeech(`${num}... ¡${text}!`, 1.4, 1.05);
+        }
+
+        function addSettingsFrase() {
+            const inputNum = document.getElementById('new-frase-num');
+            const inputText = document.getElementById('new-frase-text');
+            const num = parseInt(inputNum.value);
+            const text = inputText.value.trim();
+
+            if (num > 0 && num <= 90 && text) {
+                cantinelaPhrases[num] = text;
+                inputNum.value = '';
+                inputText.value = '';
+                renderSettingsFrases();
+            }
+        }
+
+        function deleteSettingsFrase(num) {
+            delete cantinelaPhrases[num];
+            renderSettingsFrases();
+        }
 
         // ==========================================
         // LÓGICA DEL SORTEO Y GESTIÓN DE LISTAS
