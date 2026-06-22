@@ -204,6 +204,13 @@
             </div>
 
             <div class="w-full flex flex-col gap-4 flex-1 justify-end">
+                
+                <!-- SELECTOR DE MODO -->
+                <button id="modeToggleBtn" onclick="toggleBingoMode()" class="w-full bg-purple-600/90 hover:bg-purple-500 text-white font-bold py-3 px-4 rounded-xl text-xl shadow-md transition-colors flex justify-center items-center gap-2 backdrop-blur-sm border border-purple-500/50 mb-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg>
+                    <span id="modeToggleText">Modo: Clásico</span>
+                </button>
+
                 <button id="toggleBingoBtn" onclick="toggleBingoAuto()" class="w-full bg-green-600/90 hover:bg-green-500 text-white font-bold py-5 px-4 rounded-2xl text-2xl shadow-lg transition-transform transform active:scale-95 flex justify-center items-center gap-3 backdrop-blur-sm">
                     <svg id="playIcon" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                     <svg id="pauseIcon" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
@@ -294,41 +301,49 @@
         </div>
     </div>
 
+    <!-- Modal de Prueba Oculta (Bingo Cantinela) -->
+    <div id="challenge-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 hidden-view opacity-0 transition-opacity duration-500">
+        <div class="bg-gray-900/95 backdrop-blur-xl border-4 border-red-500 rounded-3xl p-12 text-center shadow-[0_0_80px_rgba(239,68,68,0.7)] max-w-4xl min-w-[60vw] transform scale-90 transition-transform duration-500" id="challenge-modal-content">
+            <h2 class="text-5xl text-red-500 font-black mb-6 animate-pulse uppercase tracking-widest drop-shadow-md">¡NÚMERO TRAMPA!</h2>
+            <div id="challenge-text" class="text-6xl font-black text-white mb-10 py-8 uppercase break-words drop-shadow-lg leading-tight">Prueba...</div>
+            <button onclick="closeChallengeModal()" class="bg-red-600/90 text-white font-bold py-4 px-10 rounded-full text-2xl hover:bg-red-500 transition-colors shadow-lg">
+                ¡A cumplir!
+            </button>
+        </div>
+    </div>
 
     <script>
         // ==========================================
         // SOPORTE PARA BOTÓN FÍSICO USB (y Teclado)
         // ==========================================
         document.addEventListener('keydown', (event) => {
-            // Ignorar si estamos escribiendo en los inputs para no disparar la ruleta por error
             if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
 
-            // La mayoría de botones USB envían Espacio o Enter
             if (event.code === 'Space' || event.code === 'Enter') {
-                
-                if (event.code === 'Space') event.preventDefault(); // Evita scroll de pantalla
+                if (event.code === 'Space') event.preventDefault(); 
 
                 const viewBingo = document.getElementById('view-bingo');
                 const viewSorteo = document.getElementById('view-sorteo');
                 const winnerModal = document.getElementById('winner-modal');
+                const challengeModal = document.getElementById('challenge-modal');
 
-                // 1. Si hay un cartel de ganador en pantalla, el botón lo cierra
                 if (!winnerModal.classList.contains('hidden-view')) {
                     closeWinnerModal();
                     return;
                 }
+                
+                // Si la prueba oculta está en pantalla, el botón la cierra
+                if (!challengeModal.classList.contains('hidden-view')) {
+                    closeChallengeModal();
+                    return;
+                }
 
-                // 2. Si estamos en BINGO, el botón pausa/reanuda
                 if (!viewBingo.classList.contains('hidden-view')) {
-                    // Evitar iniciar si se está reseteando
                     if(resetConfirmStage === 0 && document.getElementById('toggleBingoBtn').disabled === false) {
                         toggleBingoAuto();
                     }
                 }
-                
-                // 3. Si estamos en SORTEO, el botón gira la ruleta
                 else if (!viewSorteo.classList.contains('hidden-view')) {
-                    // Solo si no está girando ya, y hay lista
                     if (!isSpinning && namesList.length > 0 && namesList[0] !== "Crea") {
                         spinRoulette();
                     }
@@ -371,7 +386,7 @@
         }
 
         // ==========================================
-        // LÓGICA DEL BINGO
+        // LÓGICA DEL BINGO Y MODO CANTINELA
         // ==========================================
         const totalNumbers = 90;
         let availableNumbers = [];
@@ -382,6 +397,69 @@
         
         let resetConfirmStage = 0;
         let resetTimeout = null;
+
+        let isCantinelaMode = false;
+        const cantinelaPhrases = {
+            5: "La manita",
+            8: "Las gafas de la abuela",
+            13: "El gafe",
+            15: "La niña bonita",
+            18: "Ya puedes entrar a la discoteca",
+            22: "Los dos patitos",
+            25: "Navidad",
+            33: "La edad de Cristo",
+            44: "Las dos sillas",
+            55: "Los dos jubilados",
+            66: "Las dos escobas",
+            69: "¡Ese no hace falta explicarlo!",
+            77: "Las dos hachas",
+            88: "Las gafas de la suegra",
+            90: "¡Bingo o nos vamos al bar!"
+        };
+
+        // --- SISTEMA DE PRUEBAS OCULTAS ---
+        const challengeList = [
+            "PRUEBA 1: BEBE UN CHUPITO",
+            "PRUEBA 2: INVITA A UN CHUPITO",
+            "PRUEBA 3: CARA O CRUZ",
+            "PRUEBA 4: ELIGE A 3 PARA BEBER",
+            "PRUEBA 5: LA MUERTE - UN TRAGO DE 5 SEGUNDOS"
+        ];
+        let secretChallengesMap = {}; // Guardará {numero: "Prueba X..."}
+
+        function generateSecretChallenges() {
+            secretChallengesMap = {};
+            let nums = [];
+            // Elegimos 5 números aleatorios del 1 al 90
+            while(nums.length < 5) {
+                let r = Math.floor(Math.random() * 90) + 1;
+                if(nums.indexOf(r) === -1) nums.push(r);
+            }
+            // Asignamos una prueba a cada número oculto
+            for(let i = 0; i < 5; i++) {
+                secretChallengesMap[nums[i]] = challengeList[i];
+            }
+        }
+
+        function toggleBingoMode() {
+            if (isPlaying || drawnNumbers.length > 0) return; // No se puede cambiar a media partida
+
+            isCantinelaMode = !isCantinelaMode;
+            const textEl = document.getElementById('modeToggleText');
+            const btnEl = document.getElementById('modeToggleBtn');
+
+            if (isCantinelaMode) {
+                textEl.innerText = "Modo: Cantinela";
+                btnEl.classList.replace('bg-purple-600/90', 'bg-pink-600/90');
+                btnEl.classList.replace('hover:bg-purple-500', 'hover:bg-pink-500');
+                btnEl.classList.replace('border-purple-500/50', 'border-pink-500/50');
+            } else {
+                textEl.innerText = "Modo: Clásico";
+                btnEl.classList.replace('bg-pink-600/90', 'bg-purple-600/90');
+                btnEl.classList.replace('hover:bg-pink-500', 'hover:bg-purple-500');
+                btnEl.classList.replace('border-pink-500/50', 'border-purple-500/50');
+            }
+        }
 
         function initBingoBoard() {
             const board = document.getElementById('bingo-board');
@@ -409,35 +487,70 @@
                 }
             }
             
+            // Generar nuevas pruebas aleatorias para la partida
+            generateSecretChallenges();
+
+            // Rehabilitar cambio de modo al reiniciar
+            document.getElementById('modeToggleBtn').disabled = false;
+            document.getElementById('modeToggleBtn').classList.remove('opacity-50', 'cursor-not-allowed');
+
             stopBingoAuto();
-            if ('speechSynthesis' in window) window.speechSynthesis.cancel(); // Detener audio si reiniciamos
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel(); 
         }
 
         // ==========================================
-        // NUEVA FUNCIÓN DE AUDIO
+        // FUNCIÓN DE AUDIO MEJORADA (Voces Naturales)
         // ==========================================
+        let spanishVoices = [];
+        let bestVoice = null;
+
+        // Esta función busca las mejores voces instaladas en el PC/Navegador
+        function loadBestVoices() {
+            if (!('speechSynthesis' in window)) return;
+            const voices = window.speechSynthesis.getVoices();
+            spanishVoices = voices.filter(v => v.lang.startsWith('es'));
+            
+            // Priorizamos voces de Google (muy naturales), Apple (Monica) o Microsoft que son menos robóticas
+            bestVoice = spanishVoices.find(v => v.name.includes('Google español') || v.name.includes('Google Spanish') || v.name.includes('Monica') || v.name.includes('Helena')) || spanishVoices[0];
+        }
+
+        // El navegador a veces tarda un instante en cargar las voces
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = loadBestVoices;
+            loadBestVoices();
+        }
+
         function announceNumber(num) {
-            // Comprobar si el navegador soporta voz
             if (!('speechSynthesis' in window)) return;
             
-            window.speechSynthesis.cancel(); // Detener cualquier audio previo
+            window.speechSynthesis.cancel(); 
             
             let numStr = num.toString();
             let textToSpeak = "";
+            let utterance = new SpeechSynthesisUtterance();
+            utterance.lang = 'es-ES';
+            if (bestVoice) utterance.voice = bestVoice; // Usamos la voz premium si la hay
             
-            if (numStr.length === 2) {
-                // Formato: "Setenta y cinco... siete... cinco"
-                // Añadimos comas para generar pausas naturales en la voz
-                textToSpeak = `${num}, , ${numStr[0]}, , ${numStr[1]}`;
+            if (isCantinelaMode) {
+                if (cantinelaPhrases[num]) {
+                    // Pausa dramática pequeña y frase con entusiasmo
+                    textToSpeak = `${num}... ¡${cantinelaPhrases[num]}!`;
+                } else {
+                    textToSpeak = `${num}`;
+                }
+                utterance.pitch = 1.4; // Tono más agudo y cómico
+                utterance.rate = 1.05; // Ritmo alegre y dinámico
             } else {
-                // Formato: Solo el número
-                textToSpeak = `${num}`;
+                if (numStr.length === 2) {
+                    textToSpeak = `${num}, , ${numStr[0]}, , ${numStr[1]}`;
+                } else {
+                    textToSpeak = `${num}`;
+                }
+                utterance.pitch = 1.0; // Tono serio normal
+                utterance.rate = 0.85; // Ritmo pausado y solemne
             }
             
-            const utterance = new SpeechSynthesisUtterance(textToSpeak);
-            utterance.lang = 'es-ES'; // Voz en español de España
-            utterance.rate = 0.85; // Un poco más despacio para darle intriga
-            
+            utterance.text = textToSpeak;
             window.speechSynthesis.speak(utterance);
         }
 
@@ -463,7 +576,54 @@
             const boardCell = document.getElementById(`num-${number}`);
             boardCell.classList.add('drawn', 'last-drawn');
             
-            announceNumber(number); // Llamada a la función de audio cada vez que sale bola
+            announceNumber(number); 
+
+            // Verificar si es un número trampa en Modo Cantinela
+            if (isCantinelaMode && secretChallengesMap[number]) {
+                stopBingoAuto();
+                
+                // Esperamos 1.5s para que le dé tiempo a cantar el número antes de saltar la alarma
+                setTimeout(() => {
+                    showChallengeModal(secretChallengesMap[number]);
+                    
+                    // Audio de la prueba
+                    if ('speechSynthesis' in window) {
+                        let alertVoice = new SpeechSynthesisUtterance("¡Atención! Prueba oculta. " + secretChallengesMap[number]);
+                        alertVoice.lang = 'es-ES';
+                        if (bestVoice) alertVoice.voice = bestVoice;
+                        alertVoice.pitch = 1.2;
+                        alertVoice.rate = 1.0;
+                        window.speechSynthesis.speak(alertVoice);
+                    }
+                }, 1500);
+            }
+        }
+
+        function showChallengeModal(text) {
+            const modal = document.getElementById('challenge-modal');
+            const content = document.getElementById('challenge-modal-content');
+            document.getElementById('challenge-text').innerText = text;
+            
+            modal.classList.remove('hidden-view');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-90');
+                content.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeChallengeModal() {
+            const modal = document.getElementById('challenge-modal');
+            const content = document.getElementById('challenge-modal-content');
+            
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-90');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden-view');
+            }, 500);
+            // Al cerrar la modal NO se reanuda automático, el presentador debe darle al botón PLAY.
         }
 
         function toggleBingoAuto() {
@@ -479,11 +639,22 @@
             
             isPlaying = true;
             
-            // Desbloquear el motor de voz del navegador con la interacción de inicio
+            // Bloquear el botón de cambiar modo cuando se empieza a jugar
+            document.getElementById('modeToggleBtn').disabled = true;
+            document.getElementById('modeToggleBtn').classList.add('opacity-50', 'cursor-not-allowed');
+
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
-                let initAudio = new SpeechSynthesisUtterance("Atención, comenzamos.");
+                let welcomeText = isCantinelaMode ? "¡Atención! Arranca el bingo cantinela." : "Atención, comenzamos.";
+                let initAudio = new SpeechSynthesisUtterance(welcomeText);
                 initAudio.lang = 'es-ES';
+                if (bestVoice) initAudio.voice = bestVoice;
+                if (isCantinelaMode) {
+                    initAudio.pitch = 1.4;
+                    initAudio.rate = 1.05;
+                } else {
+                    initAudio.pitch = 1.0;
+                }
                 window.speechSynthesis.speak(initAudio);
             }
             
@@ -583,7 +754,6 @@
         let isSpinning = false;
         let animationFrame;
 
-        // --- SISTEMA DE LISTAS ---
         function initLists() {
             const stored = localStorage.getItem('rouletteLists_cena2026');
             if (stored) {
@@ -696,7 +866,7 @@
             }
             errorMsg.classList.add('hidden-view');
 
-            let targetId; // Creamos una variable para no perder el ID al ocultar el panel
+            let targetId; 
 
             if (currentEditingId) {
                 const list = savedLists.find(l => l.id === currentEditingId);
@@ -714,8 +884,8 @@
             }
             
             saveListsToStorage();
-            hideEditList(); // Esto pone currentEditingId a null
-            selectList(targetId); // Usamos nuestro targetId guardado, ahora sí se mostrará al momento
+            hideEditList(); 
+            selectList(targetId); 
         }
 
         function deleteCurrentList() {
@@ -865,7 +1035,6 @@
             isSpinning = true;
             document.getElementById('spin-btn').disabled = true;
             
-            // Más velocidad inicial para alargar el tiempo total
             spinVelocity = 0.8 + Math.random() * 0.4; 
             
             animateRoulette();
@@ -892,7 +1061,6 @@
                 }, 50); 
             }
 
-            // Ajustada la fricción (0.993 en vez de 0.985) para que tarde mucho más en detenerse (aprox +5 a +8 segundos)
             if (spinVelocity > 0.1) {
                 spinVelocity *= 0.993; 
             } else if (spinVelocity > 0.002) {
