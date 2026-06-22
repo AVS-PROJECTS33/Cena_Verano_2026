@@ -93,8 +93,9 @@
         /* Estilos de la Ruleta */
         #roulette-container {
             position: relative;
-            width: 80vh;
-            height: 80vh;
+            /* Reducido un poco para dar espacio a la tarjeta debajo */
+            width: 70vh;
+            height: 70vh;
             margin: 0 auto;
         }
 
@@ -291,6 +292,11 @@
                     PLAY
                 </button>
             </div>
+
+            <!-- TARJETA TICKER NOMBRES (NUEVO) -->
+            <div id="ticker-card" class="mt-8 bg-black/70 border-4 border-yellow-500/80 rounded-2xl px-10 py-5 w-full max-w-3xl text-center shadow-[0_0_30px_rgba(234,179,8,0.2)] backdrop-blur-md opacity-0 transition-opacity duration-300 pointer-events-none">
+                <span id="ticker-name" class="text-5xl font-black text-white uppercase tracking-wider drop-shadow-md transition-colors">---</span>
+            </div>
         </div>
     </main>
 
@@ -374,12 +380,12 @@
         </div>
     </div>
 
+
     <script>
         // ==========================================
         // VARIABLES GLOBALES DE AJUSTES (Pruebas y Frases)
         // ==========================================
         
-        // Cargar desde LocalStorage o usar por defecto
         let defaultCantinelaPhrases = {
             2: "El casquet volador!",
             3: "Club Super3!",
@@ -416,7 +422,6 @@
             "TIRA LA RULETA"
         ];
 
-        // Fusionamos las frases por defecto con las que ya tenías guardadas en el navegador (usamos v3 para limpiar las viejas)
         let storedPhrases = JSON.parse(localStorage.getItem('bingoPhrases_2026_v3'));
         let cantinelaPhrases = storedPhrases ? { ...defaultCantinelaPhrases, ...storedPhrases } : { ...defaultCantinelaPhrases };
         let challengeList = JSON.parse(localStorage.getItem('bingoChallenges_2026')) || defaultChallengeList;
@@ -618,7 +623,7 @@
             setTimeout(loadBestVoices, 2000);
         }
 
-        // Función reutilizable para hablar (usada por el bingo y por los ajustes)
+        // Función reutilizable para hablar
         function triggerSpeech(text, pitch, rate) {
             if (!('speechSynthesis' in window)) return;
             window.speechSynthesis.cancel(); 
@@ -754,7 +759,6 @@
         function startBingoAuto() {
             if (availableNumbers.length === 0) return;
             
-            // FIX: Limpiamos por completo los intervalos por si se le da doble clic al botón
             clearInterval(bingoInterval);
             clearInterval(countdownInterval);
             
@@ -876,11 +880,9 @@
                 modal.classList.add('hidden-view');
             }, 300); 
             
-            // Guardamos al cerrar (usamos v3 para las frases)
             localStorage.setItem('bingoPhrases_2026_v3', JSON.stringify(cantinelaPhrases));
             localStorage.setItem('bingoChallenges_2026', JSON.stringify(challengeList));
             
-            // Actualizamos el juego si no está arrancado
             if (!isPlaying && drawnNumbers.length === 0) {
                 generateSecretChallenges();
             }
@@ -905,7 +907,6 @@
             }
         }
 
-        // --- GESTIÓN PRUEBAS ---
         function renderSettingsPruebas() {
             const container = document.getElementById('settings-pruebas-list');
             container.innerHTML = '';
@@ -941,7 +942,6 @@
             renderSettingsPruebas();
         }
 
-        // --- GESTIÓN FRASES CANTINELA ---
         function renderSettingsFrases() {
             const container = document.getElementById('settings-frases-list');
             container.innerHTML = '';
@@ -1026,6 +1026,11 @@
             '#22c55e', '#14b8a6', '#0ea5e9', '#3b82f6', 
             '#6366f1', '#8b5cf6', '#d946ef', '#f43f5e'
         ];
+
+        // AUDIOS DE LA RULETA
+        const audioSpin = new Audio('https://raw.githubusercontent.com/AVS-PROJECTS33/Cena_Verano_2026/main/40.%20Bonus%20Game%20(1).mp3');
+        const audioWin = new Audio('https://raw.githubusercontent.com/AVS-PROJECTS33/Cena_Verano_2026/main/42.%20Bonus%20Game%20Clear.mp3');
+        audioSpin.loop = true; // Hace que la música de giro se repita si la ruleta tarda mucho
 
         let currentAngle = 0;
         let spinVelocity = 0;
@@ -1217,6 +1222,10 @@
                 }
 
                 currentAngle = 0;
+                
+                // Ocultar tarjeta de ticker al cambiar lista
+                document.getElementById('ticker-card').classList.add('opacity-0');
+                
                 drawRoulette();
                 renderLists(); 
             }
@@ -1313,6 +1322,19 @@
             isSpinning = true;
             document.getElementById('spin-btn').disabled = true;
             
+            // Reproducir la música de la ruleta girando
+            audioWin.pause();
+            audioWin.currentTime = 0;
+            audioSpin.currentTime = 0;
+            audioSpin.play().catch(e => console.log("Audio error:", e));
+            
+            // Mostrar la tarjeta del ticker y resetear su color
+            const tickerCard = document.getElementById('ticker-card');
+            const tickerNameEl = document.getElementById('ticker-name');
+            tickerCard.classList.remove('opacity-0');
+            tickerNameEl.style.color = 'white';
+            tickerNameEl.classList.remove('animate-pulse');
+            
             spinVelocity = 0.8 + Math.random() * 0.4; 
             
             animateRoulette();
@@ -1331,12 +1353,25 @@
             const currentPegIndex = Math.floor(winAngle / sliceAngle);
 
             const pointer = document.querySelector('.pointer');
+            
+            // Si el puntero pasa a otra porción (otro nombre)
             if (currentPegIndex !== lastPegIndex) {
                 lastPegIndex = currentPegIndex;
+                
+                // Animación Puntero
                 pointer.style.transform = `translateX(-50%) rotate(${-15 - Math.random() * 10}deg)`;
                 setTimeout(() => {
                     pointer.style.transform = 'translateX(-50%) rotate(0deg)';
                 }, 50); 
+                
+                // --- ACTUALIZAR EL NOMBRE DE LA TARJETA ---
+                const currentName = namesList[currentPegIndex];
+                const tickerNameEl = document.getElementById('ticker-name');
+                tickerNameEl.innerText = currentName;
+                
+                // Pequeño destello de color al pasar
+                tickerNameEl.style.color = '#facc15'; 
+                setTimeout(() => { if(isSpinning) tickerNameEl.style.color = 'white'; }, 50);
             }
 
             if (spinVelocity > 0.1) {
@@ -1348,6 +1383,12 @@
                 isSpinning = false;
                 document.getElementById('spin-btn').disabled = false;
                 pointer.style.transform = 'translateX(-50%) rotate(0deg)'; 
+                
+                // Al detenerse, dejamos el ganador en amarillo parpadeando en la tarjeta
+                const tickerNameEl = document.getElementById('ticker-name');
+                tickerNameEl.style.color = '#facc15'; 
+                tickerNameEl.classList.add('animate-pulse');
+
                 determineWinner();
                 cancelAnimationFrame(animationFrame);
                 return;
@@ -1372,6 +1413,11 @@
         }
 
         function showWinnerModal(winnerName) {
+            // Parar música de giro y poner la de victoria
+            audioSpin.pause();
+            audioWin.currentTime = 0;
+            audioWin.play().catch(e => console.log("Audio error:", e));
+
             const modal = document.getElementById('winner-modal');
             const content = document.getElementById('winner-modal-content');
             document.getElementById('winner-name').innerText = winnerName;
@@ -1396,6 +1442,10 @@
         }
 
         function closeWinnerModal() {
+            // Parar la música de victoria al cerrar el cartel
+            audioWin.pause();
+            audioWin.currentTime = 0;
+
             const modal = document.getElementById('winner-modal');
             const content = document.getElementById('winner-modal-content');
             
